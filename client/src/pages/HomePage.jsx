@@ -20,17 +20,15 @@ const HomePage = () => {
   const { farmers, loading: farmerLoading } = useSelector(
     (state) => state.farmers
   );
-  const { categories } = useSelector((state) => state.categories);
+  const { categories, loading: categoryLoading } = useSelector(
+    (state) => state.categories
+  );
 
   useEffect(() => {
     dispatch(getProducts({ limit: 8 }));
     dispatch(getAllFarmers());
     dispatch(getCategories());
   }, [dispatch]);
-
-  if (productLoading || farmerLoading) {
-    return <Loader />;
-  }
 
   return (
     <div>
@@ -150,7 +148,11 @@ const HomePage = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {products.length > 0 ? (
+            {productLoading ? (
+              <div className="col-span-full flex justify-center py-12">
+                <Loader />
+              </div>
+            ) : products.length > 0 ? (
               products
                 .slice(0, 4)
                 .map((product) => (
@@ -183,7 +185,20 @@ const HomePage = () => {
           </h2>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {categories.length > 0 ? (
+            {categoryLoading ? (
+              <div className="col-span-full flex justify-center py-12">
+                <Loader />
+              </div>
+            ) : categories.length === 0 ? (
+              <div className="col-span-full text-center py-12">
+                <h3 className="text-2xl font-semibold text-gray-700 mb-4">
+                  Categories Coming Soon
+                </h3>
+                <p className="text-gray-500">
+                  We're working on organizing our products into categories.
+                </p>
+              </div>
+            ) : (
               categories.map((category) => (
                 <Link
                   key={category._id}
@@ -200,15 +215,6 @@ const HomePage = () => {
                   </h3>
                 </Link>
               ))
-            ) : (
-              <div className="col-span-full text-center py-12">
-                <h3 className="text-2xl font-semibold text-gray-700 mb-4">
-                  Categories Coming Soon
-                </h3>
-                <p className="text-gray-500">
-                  We're working on organizing our products into categories.
-                </p>
-              </div>
             )}
           </div>
         </div>
@@ -227,7 +233,11 @@ const HomePage = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {farmers.length > 0 ? (
+            {farmerLoading ? (
+              <div className="col-span-full flex justify-center py-12">
+                <Loader />
+              </div>
+            ) : farmers.length > 0 ? (
               farmers
                 .slice(0, 3)
                 .map((farmer) => (
