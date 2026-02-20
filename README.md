@@ -1,4 +1,4 @@
-# KisanBazar
+<!-- # KisanBazar
 
 **KisanBazar** is a full-stack web application developed during a hackathon to bridge the gap between farmers and consumers. It enables farmers to showcase their produce, connect with buyers, and build trust — all in one platform.
 
@@ -190,4 +190,5 @@ For any questions, feedback, or collaboration opportunities, feel free to contac
 
 ---
 
-> Built with ❤️ by Team Terminator | **Full Stack Web Development Hackathon** Winner at the University of South Asia 🏆
+> Built with ❤️ by Team Terminator | **Full Stack Web Development Hackathon** Winner at the University of South Asia 🏆 -->
+JUSTIN 

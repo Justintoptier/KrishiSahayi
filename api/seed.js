@@ -1,0 +1,357 @@
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const bcrypt = require("bcryptjs");
+
+dotenv.config();
+
+// ── Models ──────────────────────────────────────────────
+const User = require("./models/UserModel");
+const Category = require("./models/CategoryModel");
+const FarmerProfile = require("./models/FarmerProfileModel");
+const Product = require("./models/ProductModel");
+const Order = require("./models/OrderModel");
+const Message = require("./models/MessageModel");
+
+// ── Connect ──────────────────────────────────────────────
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB connected for seeding"))
+  .catch((err) => {
+    console.error("❌ DB connection failed:", err.message);
+    process.exit(1);
+  });
+
+// ── Seed Data ────────────────────────────────────────────
+const seed = async () => {
+  try {
+    // Clear existing data
+    console.log("🗑️  Clearing existing data...");
+    await User.deleteMany();
+    await Category.deleteMany();
+    await FarmerProfile.deleteMany();
+    await Product.deleteMany();
+    await Order.deleteMany();
+    await Message.deleteMany();
+
+    // ── 1. Categories ──
+    console.log("🌿 Seeding categories...");
+    const categories = await Category.insertMany([
+      { name: "Vegetables",  description: "Fresh farm vegetables",     icon: "🥦" },
+      { name: "Fruits",      description: "Seasonal fresh fruits",      icon: "🍎" },
+      { name: "Grains",      description: "Rice, wheat, pulses",        icon: "🌾" },
+      { name: "Dairy",       description: "Milk, ghee, eggs",           icon: "🥛" },
+      { name: "Herbs",       description: "Fresh herbs and spices",     icon: "🌿" },
+      { name: "Honey",       description: "Raw and organic honey",      icon: "🍯" },
+    ]);
+
+    // ── 2. Users (1 admin, 3 farmers, 2 consumers) ──
+    console.log("👤 Seeding users...");
+    const hashedPassword = await bcrypt.hash("password123", 10);
+
+    const admin = await User.create({
+      name: "Admin User",
+      email: "admin@kisanbazar.com",
+      password: hashedPassword,
+      role: "admin",
+      phone: "9000000000",
+      address: { street: "1 Admin Lane", city: "Mumbai", state: "Maharashtra", zipCode: "400001" },
+    });
+
+    const farmer1 = await User.create({
+      name: "Ramesh Patel",
+      email: "ramesh@kisanbazar.com",
+      password: hashedPassword,
+      role: "farmer",
+      phone: "9111111111",
+      address: { street: "Farm Road 1", city: "Nashik", state: "Maharashtra", zipCode: "422001" },
+    });
+
+    const farmer2 = await User.create({
+      name: "Gurpreet Singh",
+      email: "gurpreet@kisanbazar.com",
+      password: hashedPassword,
+      role: "farmer",
+      phone: "9222222222",
+      address: { street: "Golden Fields", city: "Amritsar", state: "Punjab", zipCode: "143001" },
+    });
+
+    const farmer3 = await User.create({
+      name: "Kavita Nair",
+      email: "kavita@kisanbazar.com",
+      password: hashedPassword,
+      role: "farmer",
+      phone: "9333333333",
+      address: { street: "Wayanad Hills", city: "Wayanad", state: "Kerala", zipCode: "673121" },
+    });
+
+    const consumer1 = await User.create({
+      name: "Priya Menon",
+      email: "priya@example.com",
+      password: hashedPassword,
+      role: "consumer",
+      phone: "9444444444",
+      address: { street: "12 MG Road", city: "Bangalore", state: "Karnataka", zipCode: "560001" },
+    });
+
+    const consumer2 = await User.create({
+      name: "Arjun Sharma",
+      email: "arjun@example.com",
+      password: hashedPassword,
+      role: "consumer",
+      phone: "9555555555",
+      address: { street: "45 Connaught Place", city: "Delhi", state: "Delhi", zipCode: "110001" },
+    });
+
+    // ── 3. Farmer Profiles ──
+    console.log("🚜 Seeding farmer profiles...");
+    await FarmerProfile.insertMany([
+      {
+        user: farmer1._id,
+        farmName: "Patel Organic Farms",
+        description: "Three-generation family farm specialising in heirloom tomatoes and exotic vegetables grown on rich volcanic soil in Nashik.",
+        farmingPractices: ["Organic", "Pesticide-Free", "Drip Irrigation"],
+        establishedYear: 1998,
+        socialMedia: { instagram: "@patelorganicfarms" },
+        businessHours: {
+          monday:    { open: "07:00", close: "18:00" },
+          tuesday:   { open: "07:00", close: "18:00" },
+          wednesday: { open: "07:00", close: "18:00" },
+          thursday:  { open: "07:00", close: "18:00" },
+          friday:    { open: "07:00", close: "18:00" },
+          saturday:  { open: "07:00", close: "14:00" },
+          sunday:    { open: "closed", close: "closed" },
+        },
+        acceptsPickup: true,
+        acceptsDelivery: true,
+        deliveryRadius: 50,
+        isVerified: true,
+      },
+      {
+        user: farmer2._id,
+        farmName: "Singh Golden Grains",
+        description: "Premium basmati rice and organic pulses grown in the fertile fields of Punjab using traditional methods passed down for generations.",
+        farmingPractices: ["Traditional", "Low Pesticide", "Crop Rotation"],
+        establishedYear: 2003,
+        socialMedia: { facebook: "SinghGoldenGrains" },
+        businessHours: {
+          monday:    { open: "06:00", close: "17:00" },
+          tuesday:   { open: "06:00", close: "17:00" },
+          wednesday: { open: "06:00", close: "17:00" },
+          thursday:  { open: "06:00", close: "17:00" },
+          friday:    { open: "06:00", close: "17:00" },
+          saturday:  { open: "06:00", close: "12:00" },
+          sunday:    { open: "closed", close: "closed" },
+        },
+        acceptsPickup: true,
+        acceptsDelivery: false,
+        deliveryRadius: 0,
+        isVerified: true,
+      },
+      {
+        user: farmer3._id,
+        farmName: "Nair Forest Farm",
+        description: "Deep in the Western Ghats, we harvest wild honey and grow potent moringa, herbs, and spices sustainably with tribal communities.",
+        farmingPractices: ["Wild Harvest", "Organic", "Tribal Partnership"],
+        establishedYear: 2012,
+        socialMedia: { instagram: "@nairforestfarm" },
+        businessHours: {
+          monday:    { open: "08:00", close: "17:00" },
+          tuesday:   { open: "08:00", close: "17:00" },
+          wednesday: { open: "08:00", close: "17:00" },
+          thursday:  { open: "08:00", close: "17:00" },
+          friday:    { open: "08:00", close: "17:00" },
+          saturday:  { open: "08:00", close: "17:00" },
+          sunday:    { open: "closed", close: "closed" },
+        },
+        acceptsPickup: false,
+        acceptsDelivery: true,
+        deliveryRadius: 100,
+        isVerified: false,
+      },
+    ]);
+
+    // ── 4. Products ──
+    console.log("🛒 Seeding products...");
+    const products = await Product.insertMany([
+      {
+        farmer: farmer1._id,
+        name: "Heirloom Tomatoes",
+        description: "Sun-ripened heirloom tomatoes bursting with flavour. Grown without pesticides on volcanic soil.",
+        category: categories[0]._id, // Vegetables
+        price: 80,
+        unit: "kg",
+        quantityAvailable: 200,
+        isOrganic: true,
+        isFeatured: true,
+        isActive: true,
+        harvestDate: new Date("2024-11-01"),
+        availableUntil: new Date("2025-12-31"),
+      },
+      {
+        farmer: farmer1._id,
+        name: "Purple Broccoli",
+        description: "Nutrient-dense purple broccoli grown in cool conditions. Rich colour, exceptional taste.",
+        category: categories[0]._id, // Vegetables
+        price: 60,
+        unit: "bunch",
+        quantityAvailable: 80,
+        isOrganic: true,
+        isFeatured: false,
+        isActive: true,
+      },
+      {
+        farmer: farmer1._id,
+        name: "Dragon Fruit",
+        description: "Vibrant pink dragon fruit fresh from our trellised farms in Nashik.",
+        category: categories[1]._id, // Fruits
+        price: 120,
+        unit: "piece",
+        quantityAvailable: 150,
+        isOrganic: false,
+        isFeatured: true,
+        isActive: true,
+      },
+      {
+        farmer: farmer2._id,
+        name: "Basmati Rice",
+        description: "Long-grain aromatic basmati with rich fragrance and fluffy texture. Aged for 1 year.",
+        category: categories[2]._id, // Grains
+        price: 120,
+        unit: "kg",
+        quantityAvailable: 500,
+        isOrganic: false,
+        isFeatured: true,
+        isActive: true,
+      },
+      {
+        farmer: farmer2._id,
+        name: "Toor Dal",
+        description: "Unpolished, naturally grown split pigeon peas with earthy aroma. High protein.",
+        category: categories[2]._id, // Grains
+        price: 95,
+        unit: "kg",
+        quantityAvailable: 300,
+        isOrganic: true,
+        isFeatured: false,
+        isActive: true,
+      },
+      {
+        farmer: farmer3._id,
+        name: "Raw Forest Honey",
+        description: "Unprocessed wild forest honey harvested by tribal communities in the Western Ghats.",
+        category: categories[5]._id, // Honey
+        price: 290,
+        unit: "500g",
+        quantityAvailable: 60,
+        isOrganic: true,
+        isFeatured: true,
+        isActive: true,
+      },
+      {
+        farmer: farmer3._id,
+        name: "Moringa Powder",
+        description: "Sun-dried and stone-ground moringa leaves. Pure superfood, no additives.",
+        category: categories[4]._id, // Herbs
+        price: 95,
+        unit: "100g",
+        quantityAvailable: 120,
+        isOrganic: true,
+        isFeatured: false,
+        isActive: true,
+      },
+      {
+        farmer: farmer3._id,
+        name: "Kashmiri Saffron",
+        description: "Authentic Mongra saffron with deep aroma. GI tagged, hand-picked at dawn.",
+        category: categories[4]._id, // Herbs
+        price: 450,
+        unit: "1g",
+        quantityAvailable: 40,
+        isOrganic: true,
+        isFeatured: true,
+        isActive: true,
+      },
+    ]);
+
+    // ── 5. Orders ──
+    console.log("📦 Seeding orders...");
+    const order1 = await Order.create({
+      consumer: consumer1._id,
+      farmer: farmer1._id,
+      items: [
+        { product: products[0]._id, quantity: 2, price: 80 },
+        { product: products[2]._id, quantity: 3, price: 120 },
+      ],
+      totalAmount: 520,
+      status: "completed",
+      paymentMethod: "cash",
+      deliveryDetails: {
+        address: { street: "12 MG Road", city: "Bangalore", state: "Karnataka", zipCode: "560001" },
+        date: new Date("2024-11-10"),
+        time: "10:00 AM",
+      },
+      notes: "Please pack carefully.",
+    });
+
+    const order2 = await Order.create({
+      consumer: consumer2._id,
+      farmer: farmer2._id,
+      items: [
+        { product: products[3]._id, quantity: 5, price: 120 },
+      ],
+      totalAmount: 600,
+      status: "pending",
+      paymentMethod: "bank_transfer",
+      pickupDetails: {
+        date: new Date("2024-11-15"),
+        time: "09:00 AM",
+        location: "Singh Golden Grains Farm, Amritsar",
+      },
+    });
+
+    // ── 6. Messages ──
+    console.log("💬 Seeding messages...");
+    await Message.insertMany([
+      {
+        sender: consumer1._id,
+        receiver: farmer1._id,
+        content: "Hi Ramesh, are the heirloom tomatoes available this week?",
+        relatedOrder: order1._id,
+        isRead: true,
+      },
+      {
+        sender: farmer1._id,
+        receiver: consumer1._id,
+        content: "Yes! Freshly harvested yesterday. I can deliver by Thursday.",
+        relatedOrder: order1._id,
+        isRead: true,
+      },
+      {
+        sender: consumer2._id,
+        receiver: farmer2._id,
+        content: "Can I get 10kg of basmati rice? Do you offer bulk discounts?",
+        relatedOrder: order2._id,
+        isRead: false,
+      },
+    ]);
+
+    console.log("");
+    console.log("✅ Database seeded successfully!");
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.log("🔑 Test Login Credentials (all passwords: password123)");
+    console.log("   Admin    → admin@kisanbazar.com");
+    console.log("   Farmer 1 → ramesh@kisanbazar.com");
+    console.log("   Farmer 2 → gurpreet@kisanbazar.com");
+    console.log("   Farmer 3 → kavita@kisanbazar.com");
+    console.log("   Consumer → priya@example.com");
+    console.log("   Consumer → arjun@example.com");
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
+    process.exit(0);
+  } catch (error) {
+    console.error("❌ Seeding failed:", error.message);
+    process.exit(1);
+  }
+};
+
+seed();
