@@ -26,7 +26,7 @@ const Footer = () => {
           <div>
             <div className="flex items-center gap-2 mb-4">
               <FaLeaf className="text-green-400 text-2xl" />
-              <h3 className="text-xl font-bold">KisanBazar</h3>
+              <h3 className="text-xl font-bold">KrishiSahayi</h3>
             </div>
             <p className="text-gray-400 mb-4">
               Connecting local farmers with consumers for fresh, sustainable
@@ -59,7 +59,7 @@ const Footer = () => {
             <ul className="space-y-4 text-gray-400">
               <li className="flex items-start gap-3">
                 <FaMapMarkerAlt className="text-green-400 mt-1" />
-                <span>Lahore, Punjab Pakistan</span>
+                <span>Chennai,TamilNadu</span>
               </li>
               <li className="flex items-center gap-3">
                 <FaPhone className="text-green-400" />
@@ -67,7 +67,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-3">
                 <FaEnvelope className="text-green-400" />
-                <span>info@freshharvestconnect.com</span>
+                <span>info@teamxyz-srm.com</span>
               </li>
             </ul>
           </div>

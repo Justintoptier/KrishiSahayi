@@ -42,7 +42,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-2">
             <FaLeaf className="text-green-500 text-2xl" />
-            <span className="text-xl font-bold text-green-600">KisanBazar</span>
+            <span className="text-xl font-bold text-green-600">KrishiSahayi</span>
           </Link>
 
           <div className="hidden md:flex items-center space-x-6">
