@@ -10,7 +10,7 @@ const UPIPaymentModal = ({
   const [step, setStep]     = useState("qr");
   const [copied, setCopied] = useState(false);
 
-  const upiId  = `${farmerPhone}@upi`;
+  const upiId  = `${farmerPhone}`;
   const upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(farmerName)}&am=${amount}&cu=INR&tn=KrishiSahayi Order`;
 
   useEffect(() => {

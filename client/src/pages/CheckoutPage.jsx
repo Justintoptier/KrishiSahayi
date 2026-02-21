@@ -179,7 +179,8 @@ const CheckoutPage = () => {
       </div>
     );
   }
-
+  console.log("farmerPhone:", farmerPhone);
+console.log("cartItems:", cartItems);
   return (
     <div className="container mx-auto px-4 py-8">
 
@@ -190,7 +191,7 @@ const CheckoutPage = () => {
         onSuccess={handleUPISuccess}
         amount={calculateTotal()}
         farmerName={farmerName}
-        farmerPhone={farmerPhone || "9000000000"} // fallback if phone not in cart state
+        farmerPhone={farmerPhone}// fallback if phone not in cart state
         cartItems={cartItems}
       />
 
