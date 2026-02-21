@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getProducts } from "../redux/slices/productSlice";
@@ -11,12 +11,97 @@ import FarmerCard from "../components/FarmerCard";
 import Loader from "../components/Loader";
 import { FaLeaf, FaUsers, FaShoppingBasket, FaHandshake } from "react-icons/fa";
 
-const HomePage = () => {
-  const dispatch = useDispatch();
+// ── Floating particle canvas ──────────────────────────────
+const ParticleCanvas = () => {
+  const canvasRef = useRef(null);
 
-  const { products = [], loading: productLoading } = useSelector((state) => state.products);
-  const { farmers = [], loading: farmerLoading } = useSelector((state) => state.farmers);
-  const { categories = [], loading: categoryLoading } = useSelector((state) => state.categories);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    let animId;
+
+    const resize = () => {
+      canvas.width  = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    // Create particles
+    const particles = Array.from({ length: 55 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 3 + 1,
+      dx: (Math.random() - 0.5) * 0.4,
+      dy: -(Math.random() * 0.6 + 0.2),
+      alpha: Math.random() * 0.5 + 0.15,
+      pulse: Math.random() * Math.PI * 2,
+    }));
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach((p) => {
+        p.pulse += 0.02;
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.y < -10) { p.y = canvas.height + 10; p.x = Math.random() * canvas.width; }
+        if (p.x < -10) p.x = canvas.width + 10;
+        if (p.x > canvas.width + 10) p.x = -10;
+
+        const a = p.alpha * (0.7 + 0.3 * Math.sin(p.pulse));
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(134,239,172,${a})`;
+        ctx.fill();
+      });
+      animId = requestAnimationFrame(draw);
+    };
+    draw();
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener("resize", resize);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full z-20 pointer-events-none"
+    />
+  );
+};
+
+// ── Parallax mouse effect on hero image ──────────────────
+const useParallax = (ref) => {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const handleMouseMove = (e) => {
+      const { clientX, clientY } = e;
+      const { innerWidth, innerHeight } = window;
+      const x = (clientX / innerWidth  - 0.5) * 18;
+      const y = (clientY / innerHeight - 0.5) * 10;
+      el.style.transform = `scale(1.08) translate(${x}px, ${y}px)`;
+    };
+    const reset = () => { el.style.transform = "scale(1.08) translate(0,0)"; };
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseleave", reset);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseleave", reset);
+    };
+  }, [ref]);
+};
+
+const HomePage = () => {
+  const dispatch   = useDispatch();
+  const bgRef      = useRef(null);
+  useParallax(bgRef);
+
+  const { products  = [], loading: productLoading  } = useSelector((s) => s.products);
+  const { farmers   = [], loading: farmerLoading   } = useSelector((s) => s.farmers);
+  const { categories= [], loading: categoryLoading } = useSelector((s) => s.categories);
 
   useEffect(() => {
     dispatch(getProducts({ limit: 8 }));
@@ -26,83 +111,184 @@ const HomePage = () => {
 
   return (
     <div>
-
-      {/* HERO */}
+      {/* ───────────────── HERO ───────────────── */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
+
+        {/* Parallax background */}
         <div
-          className="absolute inset-0 z-0"
+          ref={bgRef}
+          className="absolute inset-[-5%] z-0"
           style={{
             backgroundImage: "url('/farm-hero.png')",
             backgroundSize: "cover",
             backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
+            transition: "transform 0.12s ease-out",
+            willChange: "transform",
           }}
         />
-        <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/25 via-black/45 to-black/65" />
-        <div className="relative z-20 w-full">
-          <div className="max-w-2xl mx-auto text-center px-4">
-            <div className="inline-block bg-white/20 backdrop-blur-sm text-white text-xs font-semibold rounded-full px-3 py-1 mb-6 shadow-sm border border-white/30">
-              <span className="uppercase tracking-wider">KrishiSahayi - SRM</span>
+
+        {/* Multi-layer overlay for depth */}
+        <div className="absolute inset-0 z-10"
+          style={{
+            background: "linear-gradient(135deg, rgba(0,0,0,0.55) 0%, rgba(0,40,0,0.35) 50%, rgba(0,0,0,0.65) 100%)",
+          }}
+        />
+
+        {/* Animated vignette pulse */}
+        <div className="absolute inset-0 z-10 hero-vignette" />
+
+        {/* Floating particles */}
+        <ParticleCanvas />
+
+        {/* Diagonal light streak */}
+        <div className="absolute inset-0 z-10 overflow-hidden pointer-events-none">
+          <div className="hero-streak" />
+        </div>
+
+        {/* Content — staggered fade-up */}
+        <div className="relative z-30 w-full text-center px-4">
+          <div className="max-w-3xl mx-auto">
+
+            {/* Badge */}
+            <div className="hero-badge inline-flex items-center gap-2 bg-white/10 backdrop-blur-md text-white text-xs font-bold rounded-full px-4 py-2 mb-8 border border-white/25 shadow-lg">
+              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse inline-block" />
+              <span className="uppercase tracking-widest">KrishiSahayi · SRM</span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-extrabold mb-6 text-white drop-shadow-lg">
-              Connect Directly with
-              <br className="hidden md:block" /> Local Farmers
+
+            {/* Headline */}
+            <h1 className="hero-title text-5xl md:text-7xl font-black mb-6 text-white leading-tight"
+              style={{ textShadow: "0 4px 40px rgba(0,0,0,0.5)" }}
+            >
+              Connect Directly
+              <br />
+              <span className="hero-highlight">with Local Farmers</span>
             </h1>
-            <p className="text-base md:text-lg text-white/90 mb-10 drop-shadow">
+
+            {/* Sub */}
+            <p className="hero-sub text-lg md:text-xl text-white/85 mb-12 max-w-xl mx-auto leading-relaxed"
+              style={{ textShadow: "0 2px 12px rgba(0,0,0,0.4)" }}
+            >
               Get fresh, locally grown produce delivered straight from farm to your table.
-              <br className="hidden md:block" />
               Support local agriculture and enjoy seasonal variety.
             </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link to="/products" className="btn btn-primary px-8 py-3 text-lg rounded-xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                Shop Now
+
+            {/* CTA buttons */}
+            <div className="hero-cta flex flex-col sm:flex-row justify-center gap-4">
+              <Link
+                to="/products"
+                className="group relative overflow-hidden bg-green-500 hover:bg-green-400 text-white px-10 py-4 rounded-2xl font-bold text-lg shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-green-500/40"
+              >
+                <span className="relative z-10">Shop Now</span>
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
               </Link>
-              <Link to="/farmers" className="bg-white/20 backdrop-blur-sm text-white border-2 border-white/60 hover:bg-white hover:text-green-700 px-8 py-3 text-lg rounded-xl font-bold shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <Link
+                to="/farmers"
+                className="bg-white/15 backdrop-blur-md text-white border-2 border-white/40 hover:bg-white hover:text-green-700 px-10 py-4 rounded-2xl font-bold text-lg shadow-xl transition-all duration-300 hover:-translate-y-1"
+              >
                 Meet Our Farmers
               </Link>
+            </div>
+
+            {/* Scroll indicator */}
+            <div className="hero-scroll absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50">
+              <span className="text-xs uppercase tracking-widest">Scroll</span>
+              <div className="w-px h-10 bg-gradient-to-b from-white/40 to-transparent scroll-line" />
             </div>
           </div>
         </div>
       </section>
 
-      {/* WHY CHOOSE US */}
+      {/* CSS animations injected inline */}
+      <style>{`
+        /* Staggered entry animations */
+        .hero-badge  { animation: fadeUp 0.8s ease both; animation-delay: 0.1s; }
+        .hero-title  { animation: fadeUp 0.9s ease both; animation-delay: 0.3s; }
+        .hero-highlight { 
+          background: linear-gradient(90deg, #86efac, #4ade80, #86efac);
+          background-size: 200%;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          animation: fadeUp 0.9s ease both, shimmer 3s linear infinite;
+          animation-delay: 0.3s, 1.2s;
+        }
+        .hero-sub    { animation: fadeUp 0.9s ease both; animation-delay: 0.5s; }
+        .hero-cta    { animation: fadeUp 0.9s ease both; animation-delay: 0.7s; }
+        .hero-scroll { animation: fadeUp 1s ease both; animation-delay: 1.2s; }
+
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(32px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shimmer {
+          0%   { background-position: 0% center; }
+          100% { background-position: 200% center; }
+        }
+
+        /* Breathing vignette */
+        .hero-vignette {
+          background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%);
+          animation: breathe 6s ease-in-out infinite;
+        }
+        @keyframes breathe {
+          0%, 100% { opacity: 0.8; }
+          50%       { opacity: 1; }
+        }
+
+        /* Light streak */
+        .hero-streak {
+          position: absolute;
+          top: -20%;
+          left: -10%;
+          width: 40%;
+          height: 200%;
+          background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.04) 50%, transparent 60%);
+          animation: streak 8s ease-in-out infinite;
+          transform: rotate(-15deg);
+        }
+        @keyframes streak {
+          0%   { left: -40%; opacity: 0; }
+          10%  { opacity: 1; }
+          90%  { opacity: 1; }
+          100% { left: 120%; opacity: 0; }
+        }
+
+        /* Scroll line drop */
+        .scroll-line {
+          animation: dropLine 1.8s ease-in-out infinite;
+        }
+        @keyframes dropLine {
+          0%   { transform: scaleY(0); transform-origin: top; opacity: 0; }
+          50%  { transform: scaleY(1); opacity: 1; }
+          100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+        }
+      `}</style>
+
+      {/* ── WHY CHOOSE US ── */}
       <section className="py-24 bg-gradient-to-b from-gray-50 to-white">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-16">Why Choose KrishiSahayi?</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-            <div className="glass p-4 rounded-2xl text-center transition-transform duration-300 shadow-lg hover:shadow-xl">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FaLeaf className="text-green-500 text-3xl" />
+            {[
+              { icon: <FaLeaf className="text-green-500 text-3xl" />, title: "Fresh & Local", desc: "Get the freshest produce harvested directly from local farms." },
+              { icon: <FaUsers className="text-green-500 text-3xl" />, title: "Support Local Farmers", desc: "Help sustain local agriculture and support farming families in your community." },
+              { icon: <FaShoppingBasket className="text-green-500 text-3xl" />, title: "Seasonal Variety", desc: "Discover a wide variety of seasonal fruits, vegetables, and farm products." },
+              { icon: <FaHandshake className="text-green-500 text-3xl" />, title: "Direct Communication", desc: "Connect directly with farmers to learn about their growing practices." },
+            ].map((item, i) => (
+              <div key={i} className="glass p-4 rounded-2xl text-center transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1">
+                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  {item.icon}
+                </div>
+                <h3 className="text-xl font-semibold mb-4">{item.title}</h3>
+                <p className="text-gray-600">{item.desc}</p>
               </div>
-              <h3 className="text-xl font-semibold mb-4">Fresh & Local</h3>
-              <p className="text-gray-600">Get the freshest produce harvested directly from local farms.</p>
-            </div>
-            <div className="glass p-4 rounded-2xl text-center transition-transform duration-300 shadow-lg hover:shadow-xl">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FaUsers className="text-green-500 text-3xl" />
-              </div>
-              <h3 className="text-xl font-semibold mb-4">Support Local Farmers</h3>
-              <p className="text-gray-600">Help sustain local agriculture and support farming families in your community.</p>
-            </div>
-            <div className="glass p-4 rounded-2xl text-center transition-transform duration-300 shadow-lg hover:shadow-xl">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FaShoppingBasket className="text-green-500 text-3xl" />
-              </div>
-              <h3 className="text-xl font-semibold mb-4">Seasonal Variety</h3>
-              <p className="text-gray-600">Discover a wide variety of seasonal fruits, vegetables, and farm products.</p>
-            </div>
-            <div className="glass p-4 rounded-2xl text-center transition-transform duration-300 shadow-lg hover:shadow-xl">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FaHandshake className="text-green-500 text-3xl" />
-              </div>
-              <h3 className="text-xl font-semibold mb-4">Direct Communication</h3>
-              <p className="text-gray-600">Connect directly with farmers to learn about their growing practices.</p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* FEATURED PRODUCTS */}
+      {/* ── FEATURED PRODUCTS ── */}
       <section className="py-24">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-12">
@@ -125,7 +311,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* BROWSE BY CATEGORY */}
+      {/* ── BROWSE BY CATEGORY ── */}
       <section className="py-24 bg-gradient-to-b from-white to-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center text-gray-800 mb-16">Browse By Category</h2>
@@ -139,7 +325,8 @@ const HomePage = () => {
               </div>
             ) : (
               categories.map((category) => (
-                <Link key={category._id} to={`/products?category=${category._id}`} className="glass p-6 rounded-2xl text-center transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1">
+                <Link key={category._id} to={`/products?category=${category._id}`}
+                  className="glass p-6 rounded-2xl text-center transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1">
                   <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <span className="text-green-600 text-2xl font-bold">{category.icon}</span>
                   </div>
@@ -151,7 +338,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* OUR FARMERS */}
+      {/* ── OUR FARMERS ── */}
       <section className="py-24">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-12">
@@ -174,7 +361,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* ── CTA ── */}
       <section className="py-24 bg-gradient-to-r from-green-500 to-green-600 text-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold mb-8">Ready to Get Started?</h2>

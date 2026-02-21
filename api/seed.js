@@ -24,7 +24,6 @@ mongoose
 // ── Seed Data ────────────────────────────────────────────
 const seed = async () => {
   try {
-    // Clear existing data
     console.log("🗑️  Clearing existing data...");
     await User.deleteMany();
     await Category.deleteMany();
@@ -44,7 +43,7 @@ const seed = async () => {
       { name: "Honey",       description: "Raw and organic honey",      icon: "🍯" },
     ]);
 
-    // ── 2. Users (1 admin, 3 farmers, 2 consumers) ──
+    // ── 2. Users ──
     console.log("👤 Seeding users...");
     const hashedPassword = await bcrypt.hash("password123", 10);
 
@@ -121,10 +120,7 @@ const seed = async () => {
           saturday:  { open: "07:00", close: "14:00" },
           sunday:    { open: "closed", close: "closed" },
         },
-        acceptsPickup: true,
-        acceptsDelivery: true,
-        deliveryRadius: 50,
-        isVerified: true,
+        acceptsPickup: true, acceptsDelivery: true, deliveryRadius: 50, isVerified: true,
       },
       {
         user: farmer2._id,
@@ -142,10 +138,7 @@ const seed = async () => {
           saturday:  { open: "06:00", close: "12:00" },
           sunday:    { open: "closed", close: "closed" },
         },
-        acceptsPickup: true,
-        acceptsDelivery: false,
-        deliveryRadius: 0,
-        isVerified: true,
+        acceptsPickup: true, acceptsDelivery: false, deliveryRadius: 0, isVerified: true,
       },
       {
         user: farmer3._id,
@@ -163,27 +156,21 @@ const seed = async () => {
           saturday:  { open: "08:00", close: "17:00" },
           sunday:    { open: "closed", close: "closed" },
         },
-        acceptsPickup: false,
-        acceptsDelivery: true,
-        deliveryRadius: 100,
-        isVerified: false,
+        acceptsPickup: false, acceptsDelivery: true, deliveryRadius: 100, isVerified: false,
       },
     ]);
 
-    // ── 4. Products ──
+    // ── 4. Products (with images!) ──
     console.log("🛒 Seeding products...");
     const products = await Product.insertMany([
       {
         farmer: farmer1._id,
         name: "Heirloom Tomatoes",
         description: "Sun-ripened heirloom tomatoes bursting with flavour. Grown without pesticides on volcanic soil.",
-        category: categories[0]._id, // Vegetables
-        price: 80,
-        unit: "kg",
-        quantityAvailable: 200,
-        isOrganic: true,
-        isFeatured: true,
-        isActive: true,
+        category: categories[0]._id,
+        price: 80, unit: "kg", quantityAvailable: 200,
+        images: ["https://images.unsplash.com/photo-1546094096-0df4bcaaa337?w=400&q=80"],
+        isOrganic: true, isFeatured: true, isActive: true,
         harvestDate: new Date("2024-11-01"),
         availableUntil: new Date("2025-12-31"),
       },
@@ -191,120 +178,89 @@ const seed = async () => {
         farmer: farmer1._id,
         name: "Purple Broccoli",
         description: "Nutrient-dense purple broccoli grown in cool conditions. Rich colour, exceptional taste.",
-        category: categories[0]._id, // Vegetables
-        price: 60,
-        unit: "bunch",
-        quantityAvailable: 80,
-        isOrganic: true,
-        isFeatured: false,
-        isActive: true,
+        category: categories[0]._id,
+        price: 60, unit: "bunch", quantityAvailable: 80,
+        images: ["https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?w=400&q=80"],
+        isOrganic: true, isFeatured: false, isActive: true,
       },
       {
         farmer: farmer1._id,
         name: "Dragon Fruit",
         description: "Vibrant pink dragon fruit fresh from our trellised farms in Nashik.",
-        category: categories[1]._id, // Fruits
-        price: 120,
-        unit: "piece",
-        quantityAvailable: 150,
-        isOrganic: false,
-        isFeatured: true,
-        isActive: true,
+        category: categories[1]._id,
+        price: 120, unit: "piece", quantityAvailable: 150,
+        images: ["https://images.unsplash.com/photo-1527325678964-54921661f888?w=400&q=80"],
+        isOrganic: false, isFeatured: true, isActive: true,
       },
       {
         farmer: farmer2._id,
         name: "Basmati Rice",
         description: "Long-grain aromatic basmati with rich fragrance and fluffy texture. Aged for 1 year.",
-        category: categories[2]._id, // Grains
-        price: 120,
-        unit: "kg",
-        quantityAvailable: 500,
-        isOrganic: false,
-        isFeatured: true,
-        isActive: true,
+        category: categories[2]._id,
+        price: 120, unit: "kg", quantityAvailable: 500,
+        images: ["https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=400&q=80"],
+        isOrganic: false, isFeatured: true, isActive: true,
       },
       {
         farmer: farmer2._id,
         name: "Toor Dal",
         description: "Unpolished, naturally grown split pigeon peas with earthy aroma. High protein.",
-        category: categories[2]._id, // Grains
-        price: 95,
-        unit: "kg",
-        quantityAvailable: 300,
-        isOrganic: true,
-        isFeatured: false,
-        isActive: true,
+        category: categories[2]._id,
+        price: 95, unit: "kg", quantityAvailable: 300,
+        images: ["https://images.unsplash.com/photo-1612257416648-59a48e20a5f5?w=400&q=80"],
+        isOrganic: true, isFeatured: false, isActive: true,
       },
       {
         farmer: farmer3._id,
         name: "Raw Forest Honey",
         description: "Unprocessed wild forest honey harvested by tribal communities in the Western Ghats.",
-        category: categories[5]._id, // Honey
-        price: 290,
-        unit: "500g",
-        quantityAvailable: 60,
-        isOrganic: true,
-        isFeatured: true,
-        isActive: true,
+        category: categories[5]._id,
+        price: 290, unit: "500g", quantityAvailable: 60,
+        images: ["https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=400&q=80"],
+        isOrganic: true, isFeatured: true, isActive: true,
       },
       {
         farmer: farmer3._id,
         name: "Moringa Powder",
         description: "Sun-dried and stone-ground moringa leaves. Pure superfood, no additives.",
-        category: categories[4]._id, // Herbs
-        price: 95,
-        unit: "100g",
-        quantityAvailable: 120,
-        isOrganic: true,
-        isFeatured: false,
-        isActive: true,
+        category: categories[4]._id,
+        price: 95, unit: "100g", quantityAvailable: 120,
+        images: ["https://images.unsplash.com/photo-1515023115689-589c33041d3c?w=400&q=80"],
+        isOrganic: true, isFeatured: false, isActive: true,
       },
       {
         farmer: farmer3._id,
         name: "Kashmiri Saffron",
         description: "Authentic Mongra saffron with deep aroma. GI tagged, hand-picked at dawn.",
-        category: categories[4]._id, // Herbs
-        price: 450,
-        unit: "1g",
-        quantityAvailable: 40,
-        isOrganic: true,
-        isFeatured: true,
-        isActive: true,
+        category: categories[4]._id,
+        price: 450, unit: "1g", quantityAvailable: 40,
+        images: ["https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&q=80"],
+        isOrganic: true, isFeatured: true, isActive: true,
       },
     ]);
 
     // ── 5. Orders ──
     console.log("📦 Seeding orders...");
     const order1 = await Order.create({
-      consumer: consumer1._id,
-      farmer: farmer1._id,
+      consumer: consumer1._id, farmer: farmer1._id,
       items: [
         { product: products[0]._id, quantity: 2, price: 80 },
         { product: products[2]._id, quantity: 3, price: 120 },
       ],
-      totalAmount: 520,
-      status: "completed",
-      paymentMethod: "cash",
+      totalAmount: 520, status: "completed", paymentMethod: "cash",
       deliveryDetails: {
         address: { street: "12 MG Road", city: "Bangalore", state: "Karnataka", zipCode: "560001" },
-        date: new Date("2024-11-10"),
-        time: "10:00 AM",
+        date: new Date("2024-11-10"), time: "10:00 AM",
       },
       notes: "Please pack carefully.",
     });
 
     const order2 = await Order.create({
-      consumer: consumer2._id,
-      farmer: farmer2._id,
-      items: [
-        { product: products[3]._id, quantity: 5, price: 120 },
-      ],
-      totalAmount: 600,
-      status: "pending",
-      paymentMethod: "bank_transfer",
+      consumer: consumer2._id, farmer: farmer2._id,
+      items: [{ product: products[3]._id, quantity: 5, price: 120 }],
+      totalAmount: 600, status: "pending", paymentMethod: "bank_transfer",
       pickupDetails: {
-        date: new Date("2024-11-15"),
-        time: "09:00 AM",
+        date: new Date("2024-11-15"), time: "09:00 AM",
         location: "Singh Golden Grains Farm, Amritsar",
       },
     });
@@ -313,25 +269,19 @@ const seed = async () => {
     console.log("💬 Seeding messages...");
     await Message.insertMany([
       {
-        sender: consumer1._id,
-        receiver: farmer1._id,
+        sender: consumer1._id, receiver: farmer1._id,
         content: "Hi Ramesh, are the heirloom tomatoes available this week?",
-        relatedOrder: order1._id,
-        isRead: true,
+        relatedOrder: order1._id, isRead: true,
       },
       {
-        sender: farmer1._id,
-        receiver: consumer1._id,
+        sender: farmer1._id, receiver: consumer1._id,
         content: "Yes! Freshly harvested yesterday. I can deliver by Thursday.",
-        relatedOrder: order1._id,
-        isRead: true,
+        relatedOrder: order1._id, isRead: true,
       },
       {
-        sender: consumer2._id,
-        receiver: farmer2._id,
+        sender: consumer2._id, receiver: farmer2._id,
         content: "Can I get 10kg of basmati rice? Do you offer bulk discounts?",
-        relatedOrder: order2._id,
-        isRead: false,
+        relatedOrder: order2._id, isRead: false,
       },
     ]);
 
