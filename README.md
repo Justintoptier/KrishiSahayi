@@ -1,194 +1,193 @@
-<!-- # KisanBazar
+<img width="1907" height="867" alt="image" src="https://github.com/user-attachments/assets/993899f4-2193-40b6-8ccf-41e88a0a6c85" />
+# 🌾 KrishiSahayi
 
-**KisanBazar** is a full-stack web application developed during a hackathon to bridge the gap between farmers and consumers. It enables farmers to showcase their produce, connect with buyers, and build trust — all in one platform.
+> **Bridging the gap between farmers and consumers — one harvest at a time.**
 
-🚀 **Winner of the Full Stack Web Development Hackathon** at the University of South Asia — built by Team Terminator 🏆
-
----
-
-## 💡 Challenge (Given Scenario)
-
-**Build a full-stack web application that connects farmers and consumers.**
-
-We responded with **KisanBazar** — a modern, scalable agri-tech solution empowering both farmers and consumers.
+KrishiSahayi is a full-stack web platform that empowers farmers with a direct digital presence, eliminating the need for middlemen and enabling transparent, trustworthy connections with consumers.
 
 ---
 
-## ❗ The Problem (That Needs to Be Solved)
+## 🚩 The Problem
 
-Farmers in many regions face major hurdles:
+Farmers in many regions face significant barriers to fair trade:
 
 - ❌ Limited or no digital presence
-- ❌ Dependence on middlemen who reduce their profit margins
-- ❌ Lack of direct connection and trust with consumers
-- ❌ No centralized online platform to market their goods
+- ❌ Dependence on middlemen who cut into profit margins
+- ❌ No direct connection or trust with end consumers
+- ❌ No centralized platform to market their goods effectively
 
 ---
 
-## ✅ Our Developed Solution
+## ✅ The Solution
 
-**KisanBazar** directly addresses these issues by offering:
+**KrishiSahayi** tackles these challenges head-on with a feature-rich marketplace:
 
-- 🌾 **Farmer Profiles** — Showcase farm products, locations, and background
-- 🛒 **Consumer Dashboard** — Browse goods by category, farm
-- 📬 **Messaging System** — Enables real-time communication between farmers and consumers
-- 📦 **Order Requests** — Simple, secure order placement
-- ⚙️ **Admin Panel** — Manage users, listings, categories
-- 📈 **Trust Building** — Transparent and localized digital marketplace
-
----
-
-## Technologies Used
-
-- **Frontend:** React JS, Tailwind CSS, React Redux
-- **Backend:** Node JS, Express JS
-- **Database:** MongoDB
-- **Security:** JWT (JSON Web Token)
-- **Hosting:** Vercel
+| Feature | Description |
+|---|---|
+| 🌾 **Farmer Profiles** | Showcase farm products, location, and background |
+| 🛒 **Consumer Dashboard** | Browse goods by category and farm |
+| 📬 **Messaging System** | Real-time communication between farmers and consumers |
+| 📦 **Order Requests** | Simple and secure order placement |
+| ⚙️ **Admin Panel** | Manage users, listings, and categories |
+| 🔐 **Role-Based Auth** | Secure JWT-based access control for each user type |
 
 ---
 
-## 🧩 Features Overview
+## 🛠️ Tech Stack
 
-| Role       | Features                                                                          |
-|------------|-----------------------------------------------------------------------------------|
-| 👨‍🌾 Farmer  | Register, login, create profile, list products, manage products, view & reply to messages  |
-| 🛒 Consumer | Browse listings, search by category, message farmers, request orders               |
-| 🛠️ Admin   | Manage users, products, order requests, and categories via dashboard              |
-| 🔐 Auth    | Role-based access control                                                         |
+| Layer | Technology |
+|---|---|
+| **Frontend** | React JS, Tailwind CSS, Redux |
+| **Backend** | Node.js, Express.js |
+| **Database** | MongoDB |
+| **Auth** | JWT (JSON Web Token) |
+| **Hosting** | Vercel |
 
 ---
 
-## Getting Started
+## 👥 Roles & Permissions
+
+| Role | Capabilities |
+|---|---|
+| 👨‍🌾 **Farmer** | Register, login, create profile, list & manage products, view & reply to messages |
+| 🛒 **Consumer** | Browse listings, search by category, message farmers, place order requests |
+| 🛠️ **Admin** | Manage users, products, order requests, and categories via dashboard |
+
+---
+
+## 📁 Project Structure
+
+```
+krishisahayi/
+├── client/                        # Frontend (React)
+│   ├── public/
+│   │   └── logo.png
+│   └── src/
+│       ├── assets/                # Images and static assets
+│       ├── components/            # Reusable UI components
+│       ├── pages/                 # Application pages
+│       ├── redux/                 # State management (Redux)
+│       ├── App.jsx                # React Router setup
+│       └── main.jsx               # Application entry point
+│
+└── api/                           # Backend (Node/Express)
+    ├── controllers/               # Core business logic
+    ├── db/                        # Database connection
+    ├── models/                    # Mongoose schemas
+    ├── routes/                    # API route definitions
+    ├── utils/                     # Helper functions
+    └── index.js                   # Server entry point
+```
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js and npm installed
-- VS Code or any other code editor
-- Git (optional, for cloning the repository)
-
-### File Structures
-
-```plaintext
-client/
-├── public/
-│   └── logo.png                       # Logo file
-├── src/
-│   ├── assets/                        # Images and other assets
-│   ├── components/                    # Reusable UI components
-│   ├── pages/                         # Pages
-│   ├── redux/                         # State management
-│   ├── App.jsx                        # React Router setup
-│   └── main.jsx                       # Application entry point
-├── .env                               # Environment variables
-└── index.html                         # Root HTML file
-```
-
-```plaintext
-api/
-├── controllers/                       # Core logic
-├── db/                                # Database connection
-├── models/                            # Data schemas
-├── routes/                            # API routes
-├── utils/                             # Helper functions
-├── .env                               # Environment variables
-└── index.js                           # Main server file
-```
-
-### Setup Instructions
-
-1. **Clone the Repository**
-
-   ```bash
-   git clone https://github.com/yourusername/kisanbazar.git
-   ```
-
-   `Unzip the File`
-
-2. **Open with VS Code**
-
-   Open the project directory with VS Code or your preferred code editor.
-
-3. **Install Dependencies**
-
-    **Frontend:**
-
-    - Navigate to the frontend directory:
-
-    ```bash
-    cd client
-    ```
-
-    - Create a `.env` file in the backend directory and add the following environment variables:
-
-    ```env
-    VITE_BACKEND_URL = your_backend_url (http://localhost:5000)
-    ```
-
-    - Install the dependencies:
-
-    ```bash
-    npm install
-    ```
-
-    - Run the development server:
-
-    ```bash
-    npm run dev
-    ```
-
-    **Backend:**
-
-    - Navigate to the backend directory:
-
-    ```bash
-    cd api
-    ```
-
-    - Create a `.env` file in the backend directory and add the following environment variables:
-
-    ```env
-    PORT=5000
-    MONGO_URI=your_mongodb_connection_string
-    JWT_SECRET=your_jwt_secret_key
-    JWT_EXPIRE =your_jwt_expiry (90d)
-    ```
-
-    - Install the dependencies:
-
-    ```bash
-    npm install
-    ```
-
-    - Start the server:
-
-    ```bash
-    npm run dev
-    ```
-
-4. **Update API URLs**
-
-    Ensure that the API URLs in your frontend code are correctly pointing to your local backend server. Update the `VITE_BACKEND_URL` in the `.env` file (as mentioned in the previous step).
-
-5. **Access the Application**
-
-    After everything is set up:
-    - Open your browser and navigate to [http://localhost:5173](http://localhost:5173) to view the application.
-    - Ensure the frontend loads correctly and communicates with the backend server.
+- [Node.js](https://nodejs.org/) and npm
+- [MongoDB](https://www.mongodb.com/) instance (local or Atlas)
+- VS Code or any code editor
 
 ---
 
-## Live Links
+### 1. Clone the Repository
 
-- **Live Web:** [kisanbazar.vercel.app](https://kisanbazar.vercel.app)
-- **GitHub Repo:** [github.com/ahadalireach/kisanbazar](https://github.com/ahadalireach/kisanbazar) (Give it a Star!)
-- Live Video Demo: [Watch Now](https://www.youtube.com/watch?v=riaSSccA8uk)
-
-## Contact
-
-For any questions, feedback, or collaboration opportunities, feel free to contact me at [ahadali.reach@gmail.com](mailto:ahadali.reach@gmail.com).
+```bash
+git clone https://github.com/yourusername/krishisahayi.git
+cd krishisahayi
+```
 
 ---
 
-> Built with ❤️ by Team Terminator | **Full Stack Web Development Hackathon** Winner at the University of South Asia 🏆 -->
-JUSTIN 
+### 2. Setup the Backend
+
+```bash
+cd api
+```
+
+Create a `.env` file in the `api/` directory:
+
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
+JWT_EXPIRE=90d
+```
+
+Install dependencies and start the server:
+
+```bash
+npm install
+npm run dev
+```
+
+The backend will run at `http://localhost:5000`.
+
+---
+
+### 3. Setup the Frontend
+
+```bash
+cd client
+```
+
+Create a `.env` file in the `client/` directory:
+
+```env
+VITE_BACKEND_URL=http://localhost:5000
+```
+
+Install dependencies and start the dev server:
+
+```bash
+npm install
+npm run dev
+```
+
+The frontend will run at `http://localhost:5173`.
+
+---
+
+### 4. Access the App
+
+Open your browser and navigate to:
+
+```
+http://localhost:5173
+```
+
+Make sure the frontend is correctly communicating with the backend via the `VITE_BACKEND_URL` environment variable.
+
+---
+
+## 📸 Screenshots
+
+### 🏠 Homepage
+![KrishiSahayi Homepage](./screenshot-homepage.png)
+
+> _Add more screenshots of the farmer dashboard, consumer browse page, and admin panel here._
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to open an issue or submit a pull request.
+
+1. Fork the repository
+2. Create your feature branch: `git checkout -b feature/your-feature`
+3. Commit your changes: `git commit -m 'Add some feature'`
+4. Push to the branch: `git push origin feature/your-feature`
+5. Open a pull request
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+## 🙏 Acknowledgements
+
+Built with a mission to support the farming community through accessible technology. Special thanks to all contributors and open-source libraries that made this possible.
