@@ -11,6 +11,7 @@ import {
   FaPhone,
   FaMapMarkerAlt,
   FaLeaf,
+  FaMoneyCheckAlt,
 } from "react-icons/fa";
 import Loader from "../components/Loader";
 
@@ -22,6 +23,7 @@ const RegisterPage = () => {
     confirmPassword: "",
     role: "consumer",
     phone: "",
+    upiId: "",
     address: {
       street: "",
       city: "",
@@ -88,6 +90,7 @@ const RegisterPage = () => {
       password: formData.password,
       role: formData.role,
       phone: formData.phone,
+      upiId: formData.upiId,
       address: formData.address,
     };
 
@@ -259,29 +262,58 @@ const RegisterPage = () => {
             </div>
 
             {formData.role === "farmer" && (
-              <div className="mb-4">
-                <label
-                  htmlFor="phone"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Phone Number
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FaPhone className="text-gray-400" />
+              <>
+                <div className="mb-4">
+                  <label
+                    htmlFor="phone"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Phone Number
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <FaPhone className="text-gray-400" />
+                    </div>
+                    <input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      className="form-input pl-10"
+                      placeholder="Phone number"
+                      required={formData.role === "farmer"}
+                    />
                   </div>
-                  <input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="form-input pl-10"
-                    placeholder="Phone number"
-                    required={formData.role === "farmer"}
-                  />
                 </div>
-              </div>
+
+                <div className="mb-4">
+                  <label
+                    htmlFor="upiId"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    UPI ID
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <FaMoneyCheckAlt className="text-gray-400" />
+                    </div>
+                    <input
+                      id="upiId"
+                      name="upiId"
+                      type="text"
+                      value={formData.upiId}
+                      onChange={handleChange}
+                      className="form-input pl-10"
+                      placeholder="yourname@upi"
+                      required={formData.role === "farmer"}
+                    />
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Customers will use this to pay you via UPI
+                  </p>
+                </div>
+              </>
             )}
 
             <div className="mb-4">

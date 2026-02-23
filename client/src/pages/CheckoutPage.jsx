@@ -11,7 +11,7 @@ import {
 import { createOrder } from "../redux/slices/orderSlice";
 import { FaArrowLeft, FaLeaf, FaTrash } from "react-icons/fa";
 import Loader from "../components/Loader";
-import UPIPaymentModal from "../components/UPIPaymentModal";
+import UPIPaymentmodal from "../components/UPIPaymentmodal";
 import { placeholder } from "../assets";
 
 const CheckoutPage = () => {
@@ -41,7 +41,7 @@ const CheckoutPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { cartItems, farmerId, farmerName, farmerPhone } = useSelector(
+  const { cartItems, farmerId, farmerName, farmerUpiId } = useSelector(
     (state) => state.cart
   );
   const { user } = useSelector((state) => state.auth);
@@ -140,18 +140,15 @@ const CheckoutPage = () => {
     e.preventDefault();
     if (cartItems.length === 0) return;
 
-    // If UPI selected — show modal first, dispatch after payment confirmed
     if (orderDetails.paymentMethod === "upi") {
       setPendingOrderData(buildOrderData());
       setShowUPIModal(true);
       return;
     }
 
-    // For other payment methods — dispatch immediately
     dispatch(createOrder(buildOrderData()));
   };
 
-  // Called when user confirms UPI payment inside the modal
   const handleUPISuccess = () => {
     if (pendingOrderData) {
       dispatch(createOrder(pendingOrderData));
@@ -179,19 +176,18 @@ const CheckoutPage = () => {
       </div>
     );
   }
-  console.log("farmerPhone:", farmerPhone);
-console.log("cartItems:", cartItems);
+
   return (
     <div className="container mx-auto px-4 py-8">
 
       {/* UPI Payment Modal */}
-      <UPIPaymentModal
+      <UPIPaymentmodal
         isOpen={showUPIModal}
         onClose={() => setShowUPIModal(false)}
         onSuccess={handleUPISuccess}
         amount={calculateTotal()}
         farmerName={farmerName}
-        farmerPhone={farmerPhone}// fallback if phone not in cart state
+        farmerUpiId={farmerUpiId}
         cartItems={cartItems}
       />
 
@@ -361,7 +357,6 @@ console.log("cartItems:", cartItems);
                   <option value="other">Other</option>
                 </select>
 
-                {/* UPI hint */}
                 {orderDetails.paymentMethod === "upi" && (
                   <div className="mt-2 flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-3 py-2">
                     <span className="text-lg">📱</span>

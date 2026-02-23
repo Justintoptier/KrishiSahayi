@@ -2,15 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import { FaCheckCircle, FaTimes, FaSpinner } from "react-icons/fa";
 import QRCode from "qrcode";
 
-const UPIPaymentModal = ({
+const UPIPaymentmodal = ({
   isOpen, onClose, onSuccess,
-  amount, farmerName, farmerPhone, cartItems = [],
+  amount, farmerName, farmerUpiId, cartItems = [],
 }) => {
   const canvasRef           = useRef(null);
   const [step, setStep]     = useState("qr");
   const [copied, setCopied] = useState(false);
 
-  const upiId  = `${farmerPhone}`;
+  const upiId  = farmerUpiId;
   const upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(farmerName)}&am=${amount}&cu=INR&tn=KrishiSahayi Order`;
 
   useEffect(() => {
@@ -138,4 +138,4 @@ const UPIPaymentModal = ({
   );
 };
 
-export default UPIPaymentModal;
+export default UPIPaymentmodal;

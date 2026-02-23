@@ -12,8 +12,8 @@ const initialState = {
     cartItemsFromStorage.length > 0 ? cartItemsFromStorage[0].farmerId : null,
   farmerName:
     cartItemsFromStorage.length > 0 ? cartItemsFromStorage[0].farmerName : null,
-  farmerPhone:
-    cartItemsFromStorage.length > 0 ? cartItemsFromStorage[0].farmerPhone : null,
+  farmerUpiId:
+    cartItemsFromStorage.length > 0 ? cartItemsFromStorage[0].farmerUpiId : null,
 };
 
 const cartSlice = createSlice({
@@ -50,13 +50,13 @@ const cartSlice = createSlice({
             quantity,
             farmerId: product.farmer._id,
             farmerName: product.farmer.name,
-            farmerPhone: product.farmer.phone,
+            farmerUpiId: product.farmer.upiId,
           });
 
           if (state.farmerId === null) {
             state.farmerId = product.farmer._id;
             state.farmerName = product.farmer.name;
-            state.farmerPhone = product.farmer.phone;
+            state.farmerUpiId = product.farmer.upiId;
           }
 
           toast.success(`Added ${product.name} to your cart`);
@@ -79,7 +79,7 @@ const cartSlice = createSlice({
       if (state.cartItems.length === 0) {
         state.farmerId = null;
         state.farmerName = null;
-        state.farmerPhone = null;
+        state.farmerUpiId = null;
       }
 
       localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
@@ -98,7 +98,7 @@ const cartSlice = createSlice({
       state.cartItems = [];
       state.farmerId = null;
       state.farmerName = null;
-      state.farmerPhone = null;
+      state.farmerUpiId = null;
 
       localStorage.removeItem("cartItems");
       toast.info("Cart cleared");

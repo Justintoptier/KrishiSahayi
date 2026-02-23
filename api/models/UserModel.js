@@ -34,6 +34,12 @@ const UserSchema = new mongoose.Schema(
         return this.role === "farmer";
       },
     },
+    upiId: {
+      type: String,
+      required: function () {
+        return this.role === "farmer";
+      },
+    },
     address: {
       street: String,
       city: String,
