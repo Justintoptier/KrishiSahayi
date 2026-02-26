@@ -6,56 +6,188 @@ import { updateProfile } from "../redux/slices/authSlice";
 import { updateFarmerProfile } from "../redux/slices/farmerSlice";
 import Loader from "../components/Loader";
 import {
-  FaUser,
-  FaEnvelope,
-  FaPhone,
-  FaMapMarkerAlt,
-  FaLeaf,
-  FaCheck,
+  FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaLeaf, FaCheck,
+  FaFacebook, FaInstagram, FaTwitter, FaTimes,
 } from "react-icons/fa";
+
+const STYLE = `
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap');
+
+  .prp-root { font-family: 'Jost', sans-serif; background: #f9f5ef; min-height: 100vh; padding-bottom: 80px; }
+
+  .prp-hero {
+    background: linear-gradient(135deg, #1e2a1f, #2d5a3d);
+    padding: 48px 2rem 44px; position: relative; overflow: hidden;
+  }
+  .prp-hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 80% 50%, rgba(74,124,89,0.22) 0%, transparent 55%);
+  }
+  .prp-hero-inner {
+    max-width: 860px; margin: 0 auto;
+    display: flex; align-items: center; gap: 24px;
+    position: relative;
+  }
+  .prp-avatar {
+    width: 72px; height: 72px; flex-shrink: 0;
+    background: rgba(74,124,89,0.25); border: 2px solid rgba(125,184,148,0.3);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    color: #7db894; font-size: 26px;
+  }
+  .prp-hero-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 700; color: #e8d5b0; margin-bottom: 4px;
+  }
+  .prp-hero-role {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(74,124,89,0.18); border: 1px solid rgba(74,124,89,0.28);
+    color: #7db894; border-radius: 100px; padding: 4px 12px;
+    font-size: 0.75rem; font-weight: 500; text-transform: capitalize;
+  }
+
+  .prp-main { max-width: 860px; margin: 0 auto; padding: 32px 2rem; }
+
+  /* Tab nav */
+  .prp-tabs {
+    display: flex; gap: 4px; background: #fefcf8;
+    border: 1px solid rgba(101,78,51,0.1); border-radius: 12px;
+    padding: 4px; margin-bottom: 28px; width: fit-content;
+  }
+
+  .prp-tab {
+    padding: 9px 22px; border-radius: 9px; border: none;
+    font-family: 'Jost', sans-serif; font-size: 0.85rem; font-weight: 500;
+    cursor: pointer; transition: all 0.2s; color: #8a7a65; background: transparent;
+  }
+  .prp-tab.active {
+    background: linear-gradient(135deg, #4a7c59, #2d5a3d);
+    color: #e8d5b0;
+  }
+
+  .prp-card {
+    background: #fefcf8; border: 1px solid rgba(101,78,51,0.1);
+    border-radius: 18px; padding: 32px; box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+    margin-bottom: 20px;
+  }
+
+  .prp-card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem; font-weight: 700; color: #2d1f0e;
+    margin-bottom: 22px; padding-bottom: 12px;
+    border-bottom: 1px solid rgba(101,78,51,0.08);
+  }
+
+  .prp-field { margin-bottom: 18px; }
+
+  .prp-label {
+    display: block; font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: #8a7a65; margin-bottom: 6px;
+  }
+
+  .prp-input-wrap { position: relative; }
+  .prp-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: #b0a090; font-size: 12px; }
+
+  .prp-input {
+    width: 100%; background: #f4ede0;
+    border: 1px solid rgba(101,78,51,0.15); border-radius: 10px;
+    padding: 11px 13px 11px 38px;
+    font-family: 'Jost', sans-serif; font-size: 0.88rem; color: #3d2f1e;
+    outline: none; transition: all 0.2s; box-sizing: border-box;
+  }
+  .prp-input.no-icon { padding-left: 13px; }
+  .prp-input::placeholder { color: #b0a090; }
+  .prp-input:focus { border-color: rgba(74,124,89,0.4); background: #fefcf8; box-shadow: 0 0 0 3px rgba(74,124,89,0.08); }
+
+  .prp-textarea {
+    width: 100%; background: #f4ede0; border: 1px solid rgba(101,78,51,0.15);
+    border-radius: 10px; padding: 11px 13px; font-family: 'Jost', sans-serif;
+    font-size: 0.88rem; color: #3d2f1e; outline: none; resize: vertical;
+    transition: all 0.2s; box-sizing: border-box;
+  }
+  .prp-textarea:focus { border-color: rgba(74,124,89,0.4); background: #fefcf8; }
+  .prp-textarea::placeholder { color: #b0a090; }
+
+  .prp-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .prp-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+  /* Tag chips */
+  .prp-practice-input-row { display: flex; gap: 10px; margin-bottom: 12px; }
+  .prp-add-btn {
+    background: linear-gradient(135deg, #4a7c59, #2d5a3d); color: #e8d5b0;
+    border: none; border-radius: 10px; padding: 0 18px;
+    font-family: 'Jost', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .prp-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .prp-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(74,124,89,0.1); border: 1px solid rgba(74,124,89,0.22);
+    color: #2d5a3d; border-radius: 100px; padding: 5px 12px;
+    font-size: 0.82rem; font-weight: 500;
+  }
+
+  .prp-tag-remove {
+    background: none; border: none; color: #4a7c59; cursor: pointer;
+    padding: 0; display: flex; opacity: 0.7; transition: opacity 0.2s;
+  }
+  .prp-tag-remove:hover { opacity: 1; }
+
+  /* Business hours */
+  .prp-hours-row {
+    display: grid; grid-template-columns: 100px 1fr 1fr; align-items: center; gap: 12px;
+    padding: 8px 0; border-bottom: 1px solid rgba(101,78,51,0.06);
+  }
+  .prp-hours-row:last-child { border-bottom: none; }
+  .prp-hours-day { font-size: 0.85rem; color: #5c4a32; text-transform: capitalize; font-weight: 500; }
+
+  /* Toggle */
+  .prp-toggle-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; }
+  .prp-toggle-label { font-size: 0.88rem; color: #3d2f1e; }
+  .prp-checkbox { accent-color: #2d5a3d; width: 16px; height: 16px; cursor: pointer; }
+
+  /* Submit */
+  .prp-submit {
+    background: linear-gradient(135deg, #4a7c59, #2d5a3d); color: #e8d5b0;
+    border: none; border-radius: 12px; padding: 13px 32px;
+    font-family: 'Jost', sans-serif; font-size: 0.9rem; font-weight: 600;
+    cursor: pointer; transition: all 0.25s; margin-top: 8px;
+  }
+  .prp-submit:hover { opacity: 0.9; box-shadow: 0 6px 20px rgba(45,90,61,0.3); transform: translateY(-1px); }
+  .prp-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  .prp-success {
+    display: flex; align-items: center; gap: 8px;
+    color: #2d5a3d; font-size: 0.85rem; font-weight: 500; margin-top: 12px;
+  }
+
+  @media (max-width: 640px) {
+    .prp-grid-2, .prp-grid-3 { grid-template-columns: 1fr; }
+    .prp-hours-row { grid-template-columns: 80px 1fr 1fr; }
+  }
+`;
 
 const ProfilePage = () => {
   const dispatch = useDispatch();
   const { user, loading } = useSelector((state) => state.auth);
-  const {
-    myFarmerProfile,
-    loading: farmerLoading,
-    success: farmerSuccess,
-  } = useSelector((state) => state.farmers);
+  const { myFarmerProfile, loading: farmerLoading, success: farmerSuccess } = useSelector((state) => state.farmers);
 
   const [userForm, setUserForm] = useState({
-    name: "",
-    phone: "",
-    address: {
-      street: "",
-      city: "",
-      state: "",
-      zipCode: "",
-    },
+    name: "", phone: "",
+    address: { street: "", city: "", state: "", zipCode: "" },
   });
 
   const [farmerForm, setFarmerForm] = useState({
-    farmName: "",
-    description: "",
-    farmingPractices: [],
-    establishedYear: "",
-    socialMedia: {
-      facebook: "",
-      instagram: "",
-      twitter: "",
-    },
+    farmName: "", description: "", farmingPractices: [], establishedYear: "",
+    socialMedia: { facebook: "", instagram: "", twitter: "" },
     businessHours: {
-      monday: { open: "", close: "" },
-      tuesday: { open: "", close: "" },
-      wednesday: { open: "", close: "" },
-      thursday: { open: "", close: "" },
-      friday: { open: "", close: "" },
-      saturday: { open: "", close: "" },
-      sunday: { open: "", close: "" },
+      monday: { open: "", close: "" }, tuesday: { open: "", close: "" },
+      wednesday: { open: "", close: "" }, thursday: { open: "", close: "" },
+      friday: { open: "", close: "" }, saturday: { open: "", close: "" }, sunday: { open: "", close: "" },
     },
-    acceptsPickup: false,
-    acceptsDelivery: false,
-    deliveryRadius: 0,
+    acceptsPickup: false, acceptsDelivery: false, deliveryRadius: 0,
   });
 
   const [farmingPractice, setFarmingPractice] = useState("");
@@ -64,13 +196,10 @@ const ProfilePage = () => {
   useEffect(() => {
     if (user) {
       setUserForm({
-        name: user.name || "",
-        phone: user.phone || "",
+        name: user.name || "", phone: user.phone || "",
         address: {
-          street: user.address?.street || "",
-          city: user.address?.city || "",
-          state: user.address?.state || "",
-          zipCode: user.address?.zipCode || "",
+          street: user.address?.street || "", city: user.address?.city || "",
+          state: user.address?.state || "", zipCode: user.address?.zipCode || "",
         },
       });
     }
@@ -89,34 +218,13 @@ const ProfilePage = () => {
           twitter: myFarmerProfile.socialMedia?.twitter || "",
         },
         businessHours: {
-          monday: myFarmerProfile.businessHours?.monday || {
-            open: "",
-            close: "",
-          },
-          tuesday: myFarmerProfile.businessHours?.tuesday || {
-            open: "",
-            close: "",
-          },
-          wednesday: myFarmerProfile.businessHours?.wednesday || {
-            open: "",
-            close: "",
-          },
-          thursday: myFarmerProfile.businessHours?.thursday || {
-            open: "",
-            close: "",
-          },
-          friday: myFarmerProfile.businessHours?.friday || {
-            open: "",
-            close: "",
-          },
-          saturday: myFarmerProfile.businessHours?.saturday || {
-            open: "",
-            close: "",
-          },
-          sunday: myFarmerProfile.businessHours?.sunday || {
-            open: "",
-            close: "",
-          },
+          monday: myFarmerProfile.businessHours?.monday || { open: "", close: "" },
+          tuesday: myFarmerProfile.businessHours?.tuesday || { open: "", close: "" },
+          wednesday: myFarmerProfile.businessHours?.wednesday || { open: "", close: "" },
+          thursday: myFarmerProfile.businessHours?.thursday || { open: "", close: "" },
+          friday: myFarmerProfile.businessHours?.friday || { open: "", close: "" },
+          saturday: myFarmerProfile.businessHours?.saturday || { open: "", close: "" },
+          sunday: myFarmerProfile.businessHours?.sunday || { open: "", close: "" },
         },
         acceptsPickup: myFarmerProfile.acceptsPickup || false,
         acceptsDelivery: myFarmerProfile.acceptsDelivery || false,
@@ -127,558 +235,243 @@ const ProfilePage = () => {
 
   const handleUserChange = (e) => {
     const { name, value } = e.target;
-
     if (name.includes(".")) {
-      const [parent, child] = name.split(".");
-      setUserForm({
-        ...userForm,
-        [parent]: {
-          ...userForm[parent],
-          [child]: value,
-        },
-      });
+      const [p, c] = name.split(".");
+      setUserForm({ ...userForm, [p]: { ...userForm[p], [c]: value } });
     } else {
-      setUserForm({
-        ...userForm,
-        [name]: value,
-      });
+      setUserForm({ ...userForm, [name]: value });
     }
   };
 
   const handleFarmerChange = (e) => {
     const { name, value, type, checked } = e.target;
-
-    if (type === "checkbox") {
-      setFarmerForm({
-        ...farmerForm,
-        [name]: checked,
-      });
-      return;
-    }
-
+    if (type === "checkbox") { setFarmerForm({ ...farmerForm, [name]: checked }); return; }
     if (name.includes(".")) {
-      const [parent, child, grandchild] = name.split(".");
-
-      if (grandchild) {
-        setFarmerForm({
-          ...farmerForm,
-          [parent]: {
-            ...farmerForm[parent],
-            [child]: {
-              ...farmerForm[parent][child],
-              [grandchild]: value,
-            },
-          },
-        });
+      const parts = name.split(".");
+      if (parts.length === 3) {
+        const [p, c, g] = parts;
+        setFarmerForm({ ...farmerForm, [p]: { ...farmerForm[p], [c]: { ...farmerForm[p][c], [g]: value } } });
       } else {
-        setFarmerForm({
-          ...farmerForm,
-          [parent]: {
-            ...farmerForm[parent],
-            [child]: value,
-          },
-        });
+        const [p, c] = parts;
+        setFarmerForm({ ...farmerForm, [p]: { ...farmerForm[p], [c]: value } });
       }
     } else {
-      setFarmerForm({
-        ...farmerForm,
-        [name]: value,
-      });
+      setFarmerForm({ ...farmerForm, [name]: value });
     }
   };
 
-  const handleAddFarmingPractice = () => {
-    if (farmingPractice.trim() !== "") {
-      setFarmerForm({
-        ...farmerForm,
-        farmingPractices: [
-          ...farmerForm.farmingPractices,
-          farmingPractice.trim(),
-        ],
-      });
+  const addPractice = () => {
+    if (farmingPractice.trim()) {
+      setFarmerForm({ ...farmerForm, farmingPractices: [...farmerForm.farmingPractices, farmingPractice.trim()] });
       setFarmingPractice("");
     }
   };
 
-  const handleRemoveFarmingPractice = (index) => {
-    setFarmerForm({
-      ...farmerForm,
-      farmingPractices: farmerForm.farmingPractices.filter(
-        (_, i) => i !== index
-      ),
-    });
+  const removePractice = (i) => {
+    setFarmerForm({ ...farmerForm, farmingPractices: farmerForm.farmingPractices.filter((_, idx) => idx !== i) });
   };
 
-  const handleUserSubmit = (e) => {
-    e.preventDefault();
-    dispatch(updateProfile(userForm));
-  };
-
-  const handleFarmerSubmit = (e) => {
-    e.preventDefault();
-    dispatch(updateFarmerProfile(farmerForm));
-  };
-
-  if (loading || farmerLoading) {
-    return <Loader />;
-  }
+  if (loading || farmerLoading) return <Loader />;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">My Profile</h1>
-
-      <div className="flex border-b border-gray-200 mb-8">
-        <button
-          className={`py-2 px-4 font-medium ${
-            activeTab === "general"
-              ? "text-green-500 border-b-2 border-green-500"
-              : "text-gray-500"
-          }`}
-          onClick={() => setActiveTab("general")}
-        >
-          General Information
-        </button>
-        {user?.role === "farmer" && (
-          <button
-            className={`py-2 px-4 font-medium ${
-              activeTab === "farm"
-                ? "text-green-500 border-b-2 border-green-500"
-                : "text-gray-500"
-            }`}
-            onClick={() => setActiveTab("farm")}
-          >
-            Farm Profile
-          </button>
-        )}
-      </div>
-
-      {activeTab === "general" && (
-        <div className="glass p-6 rounded-xl">
-          <h2 className="text-xl font-semibold mb-6">General Information</h2>
-
-          <form onSubmit={handleUserSubmit}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Full Name
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FaUser className="text-gray-400" />
-                  </div>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={userForm.name}
-                    onChange={handleUserChange}
-                    className="form-input pl-10 block w-full"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Email Address
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FaEnvelope className="text-gray-400" />
-                  </div>
-                  <input
-                    type="email"
-                    id="email"
-                    value={user?.email}
-                    className="form-input pl-10 bg-gray-100 block w-full"
-                    disabled
-                  />
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  Email cannot be changed
-                </p>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="phone"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Phone Number
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FaPhone className="text-gray-400" />
-                  </div>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={userForm.phone}
-                    onChange={handleUserChange}
-                    className="form-input pl-10 block w-full"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="role"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Account Type
-                </label>
-                <input
-                  type="text"
-                  id="role"
-                  value={
-                    user?.role.charAt(0).toUpperCase() + user?.role.slice(1)
-                  }
-                  className="form-input bg-gray-100 pl-3"
-                  disabled
-                />
-              </div>
+    <>
+      <style>{STYLE}</style>
+      <div className="prp-root">
+        {/* Hero */}
+        <div className="prp-hero">
+          <div className="prp-hero-inner">
+            <div className="prp-avatar"><FaUser /></div>
+            <div>
+              <div className="prp-hero-name">{user?.name || "My Profile"}</div>
+              <div className="prp-hero-role"><FaLeaf size={9} /> {user?.role}</div>
             </div>
-
-            <div className="mb-6">
-              <h3 className="text-lg font-medium mb-3">Address</h3>
-              <div className="grid grid-cols-1 gap-4">
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FaMapMarkerAlt className="text-gray-400" />
-                  </div>
-                  <input
-                    type="text"
-                    name="address.street"
-                    value={userForm.address.street}
-                    onChange={handleUserChange}
-                    className="form-input pl-10 block w-full"
-                    placeholder="Street address"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <input
-                    type="text"
-                    name="address.city"
-                    value={userForm.address.city}
-                    onChange={handleUserChange}
-                    className="form-input block w-full pl-3"
-                    placeholder="City"
-                  />
-                  <input
-                    type="text"
-                    name="address.state"
-                    value={userForm.address.state}
-                    onChange={handleUserChange}
-                    className="form-input block w-full pl-3"
-                    placeholder="State"
-                  />
-                </div>
-
-                <input
-                  type="text"
-                  name="address.zipCode"
-                  value={userForm.address.zipCode}
-                  onChange={handleUserChange}
-                  className="form-input block w-full pl-3"
-                  placeholder="ZIP / Postal code"
-                />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={loading}
-            >
-              {loading ? "Saving..." : "Save Changes"}
-            </button>
-          </form>
+          </div>
         </div>
-      )}
 
-      {activeTab === "farm" && user?.role === "farmer" && (
-        <div className="glass p-6 rounded-xl">
-          <h2 className="text-xl font-semibold mb-6">Farm Profile</h2>
+        <div className="prp-main">
+          {/* Tabs */}
+          <div className="prp-tabs">
+            <button className={`prp-tab ${activeTab === "general" ? "active" : ""}`} onClick={() => setActiveTab("general")}>
+              General Info
+            </button>
+            {user?.role === "farmer" && (
+              <button className={`prp-tab ${activeTab === "farm" ? "active" : ""}`} onClick={() => setActiveTab("farm")}>
+                Farm Profile
+              </button>
+            )}
+          </div>
 
-          <form onSubmit={handleFarmerSubmit}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div>
-                <label
-                  htmlFor="farmName"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Farm Name
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FaLeaf className="text-gray-400" />
+          {/* General tab */}
+          {activeTab === "general" && (
+            <form onSubmit={(e) => { e.preventDefault(); dispatch(updateProfile(userForm)); }}>
+              {/* Personal */}
+              <div className="prp-card">
+                <div className="prp-card-title">Personal Information</div>
+                <div className="prp-field">
+                  <label className="prp-label">Full Name</label>
+                  <div className="prp-input-wrap">
+                    <FaUser className="prp-icon" />
+                    <input name="name" type="text" value={userForm.name} onChange={handleUserChange} className="prp-input" placeholder="Your name" />
                   </div>
-                  <input
-                    type="text"
-                    id="farmName"
-                    name="farmName"
-                    value={farmerForm.farmName}
-                    onChange={handleFarmerChange}
-                    className="form-input pl-10 block w-full"
-                    required
-                  />
+                </div>
+                <div className="prp-field">
+                  <label className="prp-label">Email</label>
+                  <div className="prp-input-wrap">
+                    <FaEnvelope className="prp-icon" />
+                    <input type="email" value={user?.email || ""} className="prp-input" disabled style={{ opacity: 0.6, cursor: "not-allowed" }} />
+                  </div>
+                </div>
+                <div className="prp-field">
+                  <label className="prp-label">Phone</label>
+                  <div className="prp-input-wrap">
+                    <FaPhone className="prp-icon" />
+                    <input name="phone" type="tel" value={userForm.phone} onChange={handleUserChange} className="prp-input" placeholder="Phone number" />
+                  </div>
                 </div>
               </div>
 
-              <div>
-                <label
-                  htmlFor="establishedYear"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Established Year
-                </label>
-                <input
-                  type="number"
-                  id="establishedYear"
-                  name="establishedYear"
-                  value={farmerForm.establishedYear}
-                  onChange={handleFarmerChange}
-                  className="form-input block w-full"
-                  min="1900"
-                  max={new Date().getFullYear()}
-                />
-              </div>
-            </div>
-
-            <div className="mb-6">
-              <label
-                htmlFor="description"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Farm Description
-              </label>
-              <textarea
-                id="description"
-                name="description"
-                rows="4"
-                value={farmerForm.description}
-                onChange={handleFarmerChange}
-                className="form-input block w-full pl-3"
-                placeholder="Tell customers about your farm..."
-                required
-              ></textarea>
-            </div>
-
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Farming Practices
-              </label>
-              <div className="flex space-x-2 mb-2">
-                <input
-                  type="text"
-                  value={farmingPractice}
-                  onChange={(e) => setFarmingPractice(e.target.value)}
-                  className="form-input flex-grow pl-3"
-                  placeholder="e.g., Organic, No-till, Permaculture"
-                />
-                <button
-                  type="button"
-                  onClick={handleAddFarmingPractice}
-                  className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
-                >
-                  Add
+              {/* Address */}
+              <div className="prp-card">
+                <div className="prp-card-title">Address</div>
+                <div className="prp-field">
+                  <label className="prp-label">Street</label>
+                  <div className="prp-input-wrap">
+                    <FaMapMarkerAlt className="prp-icon" />
+                    <input name="address.street" type="text" value={userForm.address.street} onChange={handleUserChange} className="prp-input" placeholder="Street address" />
+                  </div>
+                </div>
+                <div className="prp-grid-2" style={{ marginBottom: 14 }}>
+                  <div className="prp-field" style={{ margin: 0 }}>
+                    <label className="prp-label">City</label>
+                    <input name="address.city" type="text" value={userForm.address.city} onChange={handleUserChange} className="prp-input no-icon" placeholder="City" />
+                  </div>
+                  <div className="prp-field" style={{ margin: 0 }}>
+                    <label className="prp-label">State</label>
+                    <input name="address.state" type="text" value={userForm.address.state} onChange={handleUserChange} className="prp-input no-icon" placeholder="State" />
+                  </div>
+                </div>
+                <div className="prp-field">
+                  <label className="prp-label">ZIP Code</label>
+                  <input name="address.zipCode" type="text" value={userForm.address.zipCode} onChange={handleUserChange} className="prp-input no-icon" placeholder="ZIP / Postal code" />
+                </div>
+                <button type="submit" className="prp-submit" disabled={loading}>
+                  {loading ? "Saving…" : "Save Changes"}
                 </button>
               </div>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {farmerForm.farmingPractices.map((practice, index) => (
-                  <div
-                    key={index}
-                    className="bg-green-100 text-green-800 px-3 py-1 rounded-full flex items-center"
-                  >
-                    <span>{practice}</span>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveFarmingPractice(index)}
-                      className="ml-2 text-green-800 hover:text-green-900"
-                    >
-                      &times;
-                    </button>
+            </form>
+          )}
+
+          {/* Farm tab */}
+          {activeTab === "farm" && user?.role === "farmer" && (
+            <form onSubmit={(e) => { e.preventDefault(); dispatch(updateFarmerProfile(farmerForm)); }}>
+              {/* Farm basics */}
+              <div className="prp-card">
+                <div className="prp-card-title">Farm Information</div>
+                <div className="prp-grid-2" style={{ marginBottom: 14 }}>
+                  <div className="prp-field" style={{ margin: 0 }}>
+                    <label className="prp-label">Farm Name</label>
+                    <input name="farmName" type="text" value={farmerForm.farmName} onChange={handleFarmerChange} className="prp-input no-icon" placeholder="Your farm's name" required />
+                  </div>
+                  <div className="prp-field" style={{ margin: 0 }}>
+                    <label className="prp-label">Established Year</label>
+                    <input name="establishedYear" type="number" value={farmerForm.establishedYear} onChange={handleFarmerChange} className="prp-input no-icon" min="1900" max={new Date().getFullYear()} placeholder="e.g. 2008" />
+                  </div>
+                </div>
+                <div className="prp-field">
+                  <label className="prp-label">Description</label>
+                  <textarea name="description" rows="4" value={farmerForm.description} onChange={handleFarmerChange} className="prp-textarea" placeholder="Tell customers about your farm…" required />
+                </div>
+
+                {/* Practices */}
+                <div className="prp-field">
+                  <label className="prp-label">Farming Practices</label>
+                  <div className="prp-practice-input-row">
+                    <input type="text" value={farmingPractice} onChange={(e) => setFarmingPractice(e.target.value)} className="prp-input no-icon" style={{ flex: 1 }} placeholder="e.g. Organic, No-till, Permaculture" onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addPractice())} />
+                    <button type="button" onClick={addPractice} className="prp-add-btn">Add</button>
+                  </div>
+                  <div className="prp-tags">
+                    {farmerForm.farmingPractices.map((p, i) => (
+                      <span key={i} className="prp-tag">
+                        {p}
+                        <button type="button" onClick={() => removePractice(i)} className="prp-tag-remove"><FaTimes size={9} /></button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Social */}
+              <div className="prp-card">
+                <div className="prp-card-title">Social Media</div>
+                <div className="prp-grid-3">
+                  <div className="prp-field" style={{ margin: 0 }}>
+                    <label className="prp-label">Facebook</label>
+                    <div className="prp-input-wrap">
+                      <FaFacebook className="prp-icon" />
+                      <input name="socialMedia.facebook" type="url" value={farmerForm.socialMedia.facebook} onChange={handleFarmerChange} className="prp-input" placeholder="https://facebook.com/…" />
+                    </div>
+                  </div>
+                  <div className="prp-field" style={{ margin: 0 }}>
+                    <label className="prp-label">Instagram</label>
+                    <div className="prp-input-wrap">
+                      <FaInstagram className="prp-icon" />
+                      <input name="socialMedia.instagram" type="url" value={farmerForm.socialMedia.instagram} onChange={handleFarmerChange} className="prp-input" placeholder="https://instagram.com/…" />
+                    </div>
+                  </div>
+                  <div className="prp-field" style={{ margin: 0 }}>
+                    <label className="prp-label">Twitter</label>
+                    <div className="prp-input-wrap">
+                      <FaTwitter className="prp-icon" />
+                      <input name="socialMedia.twitter" type="url" value={farmerForm.socialMedia.twitter} onChange={handleFarmerChange} className="prp-input" placeholder="https://twitter.com/…" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Business hours */}
+              <div className="prp-card">
+                <div className="prp-card-title">Business Hours</div>
+                {Object.entries(farmerForm.businessHours).map(([day, hours]) => (
+                  <div key={day} className="prp-hours-row">
+                    <span className="prp-hours-day">{day}</span>
+                    <input type="time" name={`businessHours.${day}.open`} value={hours.open} onChange={handleFarmerChange} className="prp-input no-icon" style={{ margin: 0 }} />
+                    <input type="time" name={`businessHours.${day}.close`} value={hours.close} onChange={handleFarmerChange} className="prp-input no-icon" style={{ margin: 0 }} />
                   </div>
                 ))}
               </div>
-            </div>
 
-            <div className="mb-6">
-              <h3 className="text-lg font-medium mb-3">Social Media</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label
-                    htmlFor="facebook"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Facebook
-                  </label>
-                  <input
-                    type="url"
-                    id="facebook"
-                    name="socialMedia.facebook"
-                    value={farmerForm.socialMedia.facebook}
-                    onChange={handleFarmerChange}
-                    className="form-input block w-full pl-3"
-                    placeholder="https://facebook.com/yourfarm"
-                  />
+              {/* Order options */}
+              <div className="prp-card">
+                <div className="prp-card-title">Order Options</div>
+                <div className="prp-toggle-row">
+                  <input type="checkbox" id="acceptsPickup" name="acceptsPickup" checked={farmerForm.acceptsPickup} onChange={handleFarmerChange} className="prp-checkbox" />
+                  <label htmlFor="acceptsPickup" className="prp-toggle-label">Accept Pickup Orders</label>
                 </div>
-                <div>
-                  <label
-                    htmlFor="instagram"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Instagram
-                  </label>
-                  <input
-                    type="url"
-                    id="instagram"
-                    name="socialMedia.instagram"
-                    value={farmerForm.socialMedia.instagram}
-                    onChange={handleFarmerChange}
-                    className="form-input block w-full pl-3"
-                    placeholder="https://instagram.com/yourfarm"
-                  />
+                <div className="prp-toggle-row">
+                  <input type="checkbox" id="acceptsDelivery" name="acceptsDelivery" checked={farmerForm.acceptsDelivery} onChange={handleFarmerChange} className="prp-checkbox" />
+                  <label htmlFor="acceptsDelivery" className="prp-toggle-label">Offer Delivery</label>
                 </div>
-                <div>
-                  <label
-                    htmlFor="twitter"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Twitter
-                  </label>
-                  <input
-                    type="url"
-                    id="twitter"
-                    name="socialMedia.twitter"
-                    value={farmerForm.socialMedia.twitter}
-                    onChange={handleFarmerChange}
-                    className="form-input block w-full pl-3"
-                    placeholder="https://twitter.com/yourfarm"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="mb-6">
-              <h3 className="text-lg font-medium mb-3">Business Hours</h3>
-              <div className="grid grid-cols-1 gap-4">
-                {Object.entries(farmerForm.businessHours).map(
-                  ([day, hours]) => (
-                    <div
-                      key={day}
-                      className="grid grid-cols-3 gap-4 items-center"
-                    >
-                      <div className="capitalize">{day}</div>
-                      <div>
-                        <input
-                          type="time"
-                          name={`businessHours.${day}.open`}
-                          value={hours.open}
-                          onChange={handleFarmerChange}
-                          className="form-input"
-                        />
-                      </div>
-                      <div>
-                        <input
-                          type="time"
-                          name={`businessHours.${day}.close`}
-                          value={hours.close}
-                          onChange={handleFarmerChange}
-                          className="form-input"
-                        />
-                      </div>
-                    </div>
-                  )
-                )}
-              </div>
-            </div>
-
-            <div className="mb-6">
-              <h3 className="text-lg font-medium mb-3">Order Options</h3>
-              <div className="space-y-4">
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="acceptsPickup"
-                    name="acceptsPickup"
-                    checked={farmerForm.acceptsPickup}
-                    onChange={handleFarmerChange}
-                    className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-                  />
-                  <label
-                    htmlFor="acceptsPickup"
-                    className="ml-2 block text-sm text-gray-900"
-                  >
-                    Accepts Pickup Orders
-                  </label>
-                </div>
-
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="acceptsDelivery"
-                    name="acceptsDelivery"
-                    checked={farmerForm.acceptsDelivery}
-                    onChange={handleFarmerChange}
-                    className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-                  />
-                  <label
-                    htmlFor="acceptsDelivery"
-                    className="ml-2 block text-sm text-gray-900"
-                  >
-                    Offers Delivery
-                  </label>
-                </div>
-
                 {farmerForm.acceptsDelivery && (
-                  <div>
-                    <label
-                      htmlFor="deliveryRadius"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Delivery Radius (miles)
-                    </label>
-                    <input
-                      type="number"
-                      id="deliveryRadius"
-                      name="deliveryRadius"
-                      value={farmerForm.deliveryRadius}
-                      onChange={handleFarmerChange}
-                      className="form-input w-32"
-                      min="0"
-                    />
+                  <div className="prp-field" style={{ marginTop: 12 }}>
+                    <label className="prp-label">Delivery Radius (km)</label>
+                    <input name="deliveryRadius" type="number" min="0" value={farmerForm.deliveryRadius} onChange={handleFarmerChange} className="prp-input no-icon" style={{ maxWidth: 120 }} />
+                  </div>
+                )}
+
+                <button type="submit" className="prp-submit" disabled={farmerLoading}>
+                  {farmerLoading ? "Saving…" : "Save Farm Profile"}
+                </button>
+                {farmerSuccess && (
+                  <div className="prp-success">
+                    <FaCheck size={13} /> Farm profile updated successfully!
                   </div>
                 )}
               </div>
-            </div>
-
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={farmerLoading}
-            >
-              {farmerLoading ? "Saving..." : "Save Farm Profile"}
-            </button>
-
-            {farmerSuccess && (
-              <div className="mt-4 flex items-center text-green-600">
-                <FaCheck className="mr-2" />
-                <span>Farm profile updated successfully!</span>
-              </div>
-            )}
-          </form>
+            </form>
+          )}
         </div>
-      )}
-    </div>
+      </div>
+    </>
   );
 };
 

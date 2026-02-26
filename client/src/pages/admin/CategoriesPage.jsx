@@ -2,91 +2,47 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getCategories,
-  createCategory,
-  updateCategory,
-  deleteCategory,
-} from "../../redux/slices/categorySlice";
+import { getCategories, createCategory, updateCategory, deleteCategory } from "../../redux/slices/categorySlice";
 import Loader from "../../components/Loader";
 import { FaPlus, FaEdit, FaTrash, FaLeaf } from "react-icons/fa";
 
 const CategoriesPage = () => {
   const dispatch = useDispatch();
-  const { categories, loading, success } = useSelector(
-    (state) => state.categories
-  );
+  const { categories, loading, success } = useSelector((state) => state.categories);
 
   const [showModal, setShowModal] = useState(false);
   const [modalMode, setModalMode] = useState("add");
   const [currentCategory, setCurrentCategory] = useState(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    icon: "",
-  });
+  const [formData, setFormData] = useState({ name: "", description: "", icon: "" });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState(null);
 
-  useEffect(() => {
-    dispatch(getCategories());
-  }, [dispatch]);
+  useEffect(() => { dispatch(getCategories()); }, [dispatch]);
 
   useEffect(() => {
     if (success && showModal) {
       setShowModal(false);
-      setFormData({
-        name: "",
-        description: "",
-        icon: "",
-      });
+      setFormData({ name: "", description: "", icon: "" });
     }
   }, [success]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
   const handleAddClick = () => {
     setModalMode("add");
-    setFormData({
-      name: "",
-      description: "",
-      icon: "",
-    });
+    setFormData({ name: "", description: "", icon: "" });
     setShowModal(true);
   };
 
-  const handleEditClick = (category) => {
+  const handleEditClick = (cat) => {
     setModalMode("edit");
-    setCurrentCategory(category);
-    setFormData({
-      name: category.name,
-      description: category.description || "",
-      icon: category.icon || "",
-    });
+    setCurrentCategory(cat);
+    setFormData({ name: cat.name, description: cat.description || "", icon: cat.icon || "" });
     setShowModal(true);
-  };
-
-  const handleDeleteClick = (category) => {
-    setCategoryToDelete(category);
-    setShowDeleteModal(true);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (modalMode === "add") {
-      dispatch(createCategory(formData));
-    } else {
-      dispatch(
-        updateCategory({ id: currentCategory._id, categoryData: formData })
-      );
-    }
+    if (modalMode === "add") dispatch(createCategory(formData));
+    else dispatch(updateCategory({ id: currentCategory._id, categoryData: formData }));
   };
 
   const confirmDelete = () => {
@@ -97,181 +53,144 @@ const CategoriesPage = () => {
     }
   };
 
-  if (loading && categories.length === 0) {
-    return <Loader />;
-  }
+  if (loading && categories.length === 0) return <Loader />;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Manage Categories</h1>
-        <button
-          onClick={handleAddClick}
-          className="btn btn-primary flex items-center space-x-2"
-        >
-          <FaPlus />
-          <span>Add Category</span>
-        </button>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Jost:wght@300;400;500;600&display=swap');
+        .adm-root{font-family:'Jost',sans-serif;background:#f9f5ef;min-height:100vh;padding:40px 2rem 80px}
+        .adm-inner{max-width:1280px;margin:0 auto}
+        .adm-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;flex-wrap:wrap;gap:16px}
+        .adm-title{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:#1e2a1f}
+        .adm-subtitle{font-size:.875rem;color:#8a7a65;font-weight:300;margin-top:4px}
+        .adm-btn-primary{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#4a7c59,#2d5a3d);color:#e8d5b0;border:none;border-radius:12px;padding:11px 22px;font-family:'Jost',sans-serif;font-size:.875rem;font-weight:500;cursor:pointer;transition:all .25s ease;box-shadow:0 2px 8px rgba(45,90,61,.25);text-decoration:none}
+        .adm-btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(45,90,61,.35)}
+        .adm-table-wrap{background:#fefcf8;border:1px solid rgba(101,78,51,.1);border-radius:20px;overflow:hidden}
+        .adm-table{width:100%;border-collapse:collapse}
+        .adm-table thead{background:#f4ede0}
+        .adm-table th{padding:12px 20px;font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#8a7a65;text-align:left}
+        .adm-table th.right{text-align:right}
+        .adm-table td{padding:18px 20px;font-size:.875rem;color:#3d2f1e;border-bottom:1px solid rgba(101,78,51,.06)}
+        .adm-table td.right{text-align:right}
+        .adm-table tbody tr:hover{background:#faf6f0}
+        .adm-table tbody tr:last-child td{border-bottom:none}
+        .adm-cat-icon{width:42px;height:42px;background:rgba(74,124,89,.1);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#4a7c59;font-size:16px;flex-shrink:0}
+        .adm-icon-btn{width:32px;height:32px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:all .2s ease;font-size:13px}
+        .adm-icon-btn-edit{background:rgba(74,124,89,.1);color:#4a7c59}
+        .adm-icon-btn-edit:hover{background:rgba(74,124,89,.2)}
+        .adm-icon-btn-delete{background:rgba(192,57,43,.1);color:#c0392b}
+        .adm-icon-btn-delete:hover{background:rgba(192,57,43,.2)}
+        .adm-empty{text-align:center;padding:60px 20px;background:#fefcf8;border:1px solid rgba(101,78,51,.1);border-radius:20px}
+        .adm-empty-icon{width:72px;height:72px;background:#f0e8d8;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:#8a7a65;font-size:26px}
+        .adm-empty-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:#3d2f1e;margin-bottom:8px}
+        .adm-empty-sub{color:#8a7a65;font-size:.875rem;margin-bottom:20px}
+        .adm-modal-overlay{position:fixed;inset:0;background:rgba(20,15,8,.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px}
+        .adm-modal{background:#fefcf8;border:1px solid rgba(101,78,51,.12);border-radius:24px;padding:32px;max-width:480px;width:100%;box-shadow:0 24px 64px rgba(20,15,8,.25);animation:modalIn .25s ease}
+        @keyframes modalIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+        .adm-modal-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:#1e2a1f;margin-bottom:20px}
+        .adm-field{margin-bottom:18px}
+        .adm-label{display:block;font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#8a7a65;margin-bottom:8px}
+        .adm-input{width:100%;background:#f4ede0;border:1px solid rgba(101,78,51,.15);border-radius:12px;padding:12px 16px;font-family:'Jost',sans-serif;font-size:.9rem;color:#3d2f1e;outline:none;transition:all .2s ease;box-sizing:border-box}
+        .adm-input:focus{border-color:rgba(74,124,89,.4);background:#fefcf8;box-shadow:0 0 0 3px rgba(74,124,89,.08)}
+        .adm-textarea{width:100%;background:#f4ede0;border:1px solid rgba(101,78,51,.15);border-radius:12px;padding:12px 16px;font-family:'Jost',sans-serif;font-size:.9rem;color:#3d2f1e;outline:none;resize:vertical;min-height:80px;transition:all .2s ease;box-sizing:border-box}
+        .adm-textarea:focus{border-color:rgba(74,124,89,.4);background:#fefcf8}
+        .adm-modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}
+        .adm-btn-outline{display:inline-flex;align-items:center;background:#f0e8d8;color:#3d2f1e;border:1px solid rgba(101,78,51,.2);border-radius:12px;padding:10px 20px;font-family:'Jost',sans-serif;font-size:.875rem;cursor:pointer;transition:all .2s ease}
+        .adm-btn-outline:hover{background:#e5d9c5}
+        .adm-btn-danger{display:inline-flex;align-items:center;background:#c0392b;color:white;border:none;border-radius:12px;padding:10px 20px;font-family:'Jost',sans-serif;font-size:.875rem;font-weight:500;cursor:pointer}
+        .adm-btn-danger:hover{background:#a93226}
+        @media(max-width:640px){.adm-root{padding:24px 1rem 60px}}
+      `}</style>
+
+      <div className="adm-root">
+        <div className="adm-inner">
+          <div className="adm-header">
+            <div>
+              <h1 className="adm-title">Categories</h1>
+              <p className="adm-subtitle">Manage product categories</p>
+            </div>
+            <button className="adm-btn-primary" onClick={handleAddClick}>
+              <FaPlus size={12} /> Add Category
+            </button>
+          </div>
+
+          {categories.length > 0 ? (
+            <div className="adm-table-wrap">
+              <table className="adm-table">
+                <thead>
+                  <tr>
+                    <th>Category</th>
+                    <th>Description</th>
+                    <th className="right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {categories.map((cat) => (
+                    <tr key={cat._id}>
+                      <td>
+                        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                          <div className="adm-cat-icon">
+                            {cat.icon ? <span style={{ fontSize: 18 }}>{cat.icon}</span> : <FaLeaf />}
+                          </div>
+                          <span style={{ fontWeight: 500 }}>{cat.name}</span>
+                        </div>
+                      </td>
+                      <td style={{ color: "#8a7a65", fontSize: "0.82rem", maxWidth: 400 }}>
+                        {cat.description || <em style={{ opacity: 0.5 }}>No description</em>}
+                      </td>
+                      <td className="right">
+                        <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
+                          <button className="adm-icon-btn adm-icon-btn-edit" onClick={() => handleEditClick(cat)} title="Edit">
+                            <FaEdit size={11} />
+                          </button>
+                          <button className="adm-icon-btn adm-icon-btn-delete" onClick={() => { setCategoryToDelete(cat); setShowDeleteModal(true); }} title="Delete">
+                            <FaTrash size={11} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="adm-empty">
+              <div className="adm-empty-icon"><FaLeaf /></div>
+              <h3 className="adm-empty-title">No Categories Yet</h3>
+              <p className="adm-empty-sub">Add your first category to get started.</p>
+              <button className="adm-btn-primary" onClick={handleAddClick}>
+                <FaPlus size={12} /> Add Category
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Categories List */}
-      {categories.length > 0 ? (
-        <div className="glass rounded-xl overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Category
-                  </th>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Description
-                  </th>
-                  <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {categories.map((category) => (
-                  <tr key={category._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                          {category.icon ? (
-                            <span className="text-green-600">
-                              {category.icon}
-                            </span>
-                          ) : (
-                            <FaLeaf className="text-green-500" />
-                          )}
-                        </div>
-                        <div className="font-medium text-gray-900">
-                          {category.name}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-500 max-w-md">
-                        {category.description || "No description provided"}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex justify-end space-x-2">
-                        <button
-                          onClick={() => handleEditClick(category)}
-                          className="text-green-600 hover:text-green-900"
-                          title="Edit"
-                        >
-                          <FaEdit />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteClick(category)}
-                          className="text-red-600 hover:text-red-900"
-                          title="Delete"
-                        >
-                          <FaTrash />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      ) : (
-        <div className="text-center py-12 glass rounded-xl">
-          <FaLeaf className="text-green-500 text-5xl mx-auto mb-4" />
-          <h3 className="text-xl font-semibold mb-2">No Categories Found</h3>
-          <p className="text-gray-600 mb-6">
-            Add your first category to get started.
-          </p>
-          <button onClick={handleAddClick} className="btn btn-primary">
-            Add Category
-          </button>
-        </div>
-      )}
-
+      {/* Add/Edit Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-bold mb-4">
+        <div className="adm-modal-overlay">
+          <div className="adm-modal">
+            <h3 className="adm-modal-title">
               {modalMode === "add" ? "Add New Category" : "Edit Category"}
             </h3>
             <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Category Name*
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="form-input pl-3"
-                  required
-                />
+              <div className="adm-field">
+                <label className="adm-label">Category Name *</label>
+                <input type="text" name="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="adm-input" required />
               </div>
-
-              <div className="mb-4">
-                <label
-                  htmlFor="description"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Description
-                </label>
-                <textarea
-                  id="description"
-                  name="description"
-                  rows="3"
-                  value={formData.description}
-                  onChange={handleChange}
-                  className="form-input pl-3"
-                  placeholder="Optional description"
-                ></textarea>
+              <div className="adm-field">
+                <label className="adm-label">Description</label>
+                <textarea name="description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="adm-textarea" placeholder="Optional description..." />
               </div>
-
-              <div className="mb-6">
-                <label
-                  htmlFor="icon"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Icon (emoji or symbol)
-                </label>
-                <input
-                  type="text"
-                  id="icon"
-                  name="icon"
-                  value={formData.icon}
-                  onChange={handleChange}
-                  className="form-input pl-3"
-                  placeholder="Optional icon"
-                />
+              <div className="adm-field">
+                <label className="adm-label">Icon (emoji)</label>
+                <input type="text" name="icon" value={formData.icon} onChange={(e) => setFormData({ ...formData, icon: e.target.value })} className="adm-input" placeholder="e.g. 🥦 🍎 🌾" />
               </div>
-
-              <div className="flex justify-end space-x-3">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                  disabled={loading}
-                >
-                  {loading
-                    ? "Saving..."
-                    : modalMode === "add"
-                    ? "Add Category"
-                    : "Update Category"}
+              <div className="adm-modal-actions">
+                <button type="button" className="adm-btn-outline" onClick={() => setShowModal(false)}>Cancel</button>
+                <button type="submit" className="adm-btn-primary" disabled={loading}>
+                  {loading ? "Saving..." : modalMode === "add" ? "Add Category" : "Save Changes"}
                 </button>
               </div>
             </form>
@@ -279,33 +198,22 @@ const CategoriesPage = () => {
         </div>
       )}
 
+      {/* Delete Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-bold mb-4">Confirm Delete</h3>
-            <p className="mb-6">
-              Are you sure you want to delete the category{" "}
-              <span className="font-medium">{categoryToDelete?.name}</span>?
-              This action cannot be undone.
+        <div className="adm-modal-overlay">
+          <div className="adm-modal">
+            <h3 className="adm-modal-title">Delete Category</h3>
+            <p style={{ fontSize: "0.875rem", color: "#8a7a65", lineHeight: 1.6, marginBottom: 24 }}>
+              Are you sure you want to delete <strong style={{ color: "#3d2f1e" }}>{categoryToDelete?.name}</strong>? This action cannot be undone.
             </p>
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDelete}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-              >
-                Delete
-              </button>
+            <div className="adm-modal-actions">
+              <button className="adm-btn-outline" onClick={() => setShowDeleteModal(false)}>Cancel</button>
+              <button className="adm-btn-danger" onClick={confirmDelete}>Delete</button>
             </div>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

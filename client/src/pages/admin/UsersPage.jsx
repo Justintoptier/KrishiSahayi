@@ -1,268 +1,245 @@
-"use client"
+"use client";
 
-import React from "react"
-
-import { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { getAllUsers, deleteUser } from "../../redux/slices/userSlice"
-import Loader from "../../components/Loader"
-import { FaSearch, FaUserEdit, FaTrash, FaEnvelope, FaPhone, FaMapMarkerAlt } from "react-icons/fa"
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllUsers, deleteUser } from "../../redux/slices/userSlice";
+import Loader from "../../components/Loader";
+import { FaSearch, FaUserEdit, FaTrash, FaEnvelope, FaPhone, FaMapMarkerAlt, FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 const UsersPage = () => {
-  const dispatch = useDispatch()
-  const { users, loading } = useSelector((state) => state.users)
+  const dispatch = useDispatch();
+  const { users, loading } = useSelector((state) => state.users);
 
-  const [searchTerm, setSearchTerm] = useState("")
-  const [roleFilter, setRoleFilter] = useState("all")
-  const [filteredUsers, setFilteredUsers] = useState([])
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [userToDelete, setUserToDelete] = useState(null)
-  const [showUserDetails, setShowUserDetails] = useState(null)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
+  const [expandedUser, setExpandedUser] = useState(null);
 
-  useEffect(() => {
-    dispatch(getAllUsers())
-  }, [dispatch])
+  useEffect(() => { dispatch(getAllUsers()); }, [dispatch]);
 
-  useEffect(() => {
-    if (users) {
-      let filtered = [...users]
-
-      // Apply role filter
-      if (roleFilter !== "all") {
-        filtered = filtered.filter((user) => user.role === roleFilter)
-      }
-
-      // Apply search filter
-      if (searchTerm) {
-        filtered = filtered.filter(
-          (user) =>
-            user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.email.toLowerCase().includes(searchTerm.toLowerCase()),
-        )
-      }
-
-      setFilteredUsers(filtered)
-    }
-  }, [users, searchTerm, roleFilter])
-
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value)
-  }
-
-  const handleRoleFilterChange = (e) => {
-    setRoleFilter(e.target.value)
-  }
-
-  const handleDeleteClick = (user) => {
-    setUserToDelete(user)
-    setShowDeleteModal(true)
-  }
+  const filteredUsers = (users || []).filter((u) => {
+    const matchRole = roleFilter === "all" || u.role === roleFilter;
+    const matchSearch = !searchTerm ||
+      u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.email.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchRole && matchSearch;
+  });
 
   const confirmDelete = () => {
     if (userToDelete) {
-      dispatch(deleteUser(userToDelete._id))
-      setShowDeleteModal(false)
-      setUserToDelete(null)
+      dispatch(deleteUser(userToDelete._id));
+      setShowDeleteModal(false);
+      setUserToDelete(null);
     }
-  }
+  };
 
-  const toggleUserDetails = (userId) => {
-    if (showUserDetails === userId) {
-      setShowUserDetails(null)
-    } else {
-      setShowUserDetails(userId)
-    }
-  }
+  const roleBadge = (role) => {
+    const map = { admin: "adm-badge adm-badge-purple", farmer: "adm-badge adm-badge-green", consumer: "adm-badge adm-badge-blue" };
+    return map[role] || "adm-badge adm-badge-gray";
+  };
 
-  if (loading && users.length === 0) {
-    return <Loader />
-  }
+  if (loading && users.length === 0) return <Loader />;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Manage Users</h1>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Jost:wght@300;400;500;600&display=swap');
+        .adm-root{font-family:'Jost',sans-serif;background:#f9f5ef;min-height:100vh;padding:40px 2rem 80px}
+        .adm-inner{max-width:1280px;margin:0 auto}
+        .adm-title{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:#1e2a1f}
+        .adm-subtitle{font-size:.875rem;color:#8a7a65;font-weight:300;margin-top:4px;margin-bottom:32px}
+        .adm-toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:28px}
+        .adm-search-wrap{position:relative;flex:1;min-width:200px}
+        .adm-search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#8a7a65;font-size:13px;pointer-events:none}
+        .adm-search{width:100%;background:#fefcf8;border:1px solid rgba(101,78,51,.15);border-radius:12px;padding:11px 16px 11px 38px;font-family:'Jost',sans-serif;font-size:.875rem;color:#3d2f1e;outline:none;transition:all .2s ease;box-sizing:border-box}
+        .adm-search:focus{border-color:rgba(74,124,89,.4);box-shadow:0 0 0 3px rgba(74,124,89,.08)}
+        .adm-select{background:#fefcf8;border:1px solid rgba(101,78,51,.15);border-radius:12px;padding:11px 16px;font-family:'Jost',sans-serif;font-size:.875rem;color:#3d2f1e;outline:none;cursor:pointer}
+        .adm-table-wrap{background:#fefcf8;border:1px solid rgba(101,78,51,.1);border-radius:20px;overflow:hidden}
+        .adm-table{width:100%;border-collapse:collapse}
+        .adm-table thead{background:#f4ede0}
+        .adm-table th{padding:12px 20px;font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#8a7a65;text-align:left}
+        .adm-table th.center{text-align:center}
+        .adm-table th.right{text-align:right}
+        .adm-table td{padding:16px 20px;font-size:.875rem;color:#3d2f1e;border-bottom:1px solid rgba(101,78,51,.06)}
+        .adm-table td.center{text-align:center}
+        .adm-table td.right{text-align:right}
+        .adm-table tbody tr:hover{background:#faf6f0}
+        .adm-table tbody tr:last-child td{border-bottom:none}
+        .adm-badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:100px;font-size:.72rem;font-weight:600}
+        .adm-badge-green{background:rgba(74,124,89,.12);color:#2d5a3d}
+        .adm-badge-blue{background:rgba(52,152,219,.12);color:#1a6fa8}
+        .adm-badge-purple{background:rgba(142,68,173,.1);color:#7d3c98}
+        .adm-badge-gray{background:rgba(101,78,51,.08);color:#8a7a65}
+        .adm-icon-btn{width:32px;height:32px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:all .2s ease;font-size:13px}
+        .adm-icon-btn-edit{background:rgba(52,152,219,.1);color:#2980b9}
+        .adm-icon-btn-edit:hover{background:rgba(52,152,219,.2)}
+        .adm-icon-btn-delete{background:rgba(192,57,43,.1);color:#c0392b}
+        .adm-icon-btn-delete:hover{background:rgba(192,57,43,.2)}
+        .adm-avatar{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#4a7c59,#2d5a3d);display:flex;align-items:center;justify-content:center;color:#e8d5b0;font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;flex-shrink:0}
+        .adm-expand-row{background:#faf6f0;border-bottom:1px solid rgba(101,78,51,.06)}
+        .adm-expand-inner{padding:16px 20px 20px 70px;display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+        .adm-expand-section h4{font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#8a7a65;margin-bottom:12px}
+        .adm-expand-item{display:flex;align-items:center;gap:10px;font-size:.85rem;color:#5c4a32;margin-bottom:8px}
+        .adm-expand-item-icon{color:#4a7c59;font-size:12px;width:16px}
+        .adm-empty{text-align:center;padding:60px 20px;background:#fefcf8;border:1px solid rgba(101,78,51,.1);border-radius:20px}
+        .adm-empty-icon{width:72px;height:72px;background:#f0e8d8;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:#8a7a65;font-size:26px}
+        .adm-empty-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:#3d2f1e;margin-bottom:8px}
+        .adm-empty-sub{color:#8a7a65;font-size:.875rem}
+        .adm-modal-overlay{position:fixed;inset:0;background:rgba(20,15,8,.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px}
+        .adm-modal{background:#fefcf8;border:1px solid rgba(101,78,51,.12);border-radius:24px;padding:32px;max-width:480px;width:100%;box-shadow:0 24px 64px rgba(20,15,8,.25);animation:modalIn .25s ease}
+        @keyframes modalIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+        .adm-modal-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:#1e2a1f;margin-bottom:8px}
+        .adm-modal-desc{font-size:.875rem;color:#8a7a65;font-weight:300;line-height:1.6;margin-bottom:24px}
+        .adm-modal-actions{display:flex;justify-content:flex-end;gap:10px}
+        .adm-btn-outline{display:inline-flex;align-items:center;gap:8px;background:#f0e8d8;color:#3d2f1e;border:1px solid rgba(101,78,51,.2);border-radius:12px;padding:10px 20px;font-family:'Jost',sans-serif;font-size:.875rem;cursor:pointer;transition:all .2s ease}
+        .adm-btn-outline:hover{background:#e5d9c5}
+        .adm-btn-danger{display:inline-flex;align-items:center;background:#c0392b;color:white;border:none;border-radius:12px;padding:10px 20px;font-family:'Jost',sans-serif;font-size:.875rem;font-weight:500;cursor:pointer;transition:all .2s ease}
+        .adm-btn-danger:hover{background:#a93226}
+        @media(max-width:640px){.adm-root{padding:24px 1rem 60px}.adm-expand-inner{grid-template-columns:1fr;padding-left:20px}}
+      `}</style>
 
-      {/* Filters */}
-      <div className="flex flex-col md:flex-row gap-4 mb-8">
-        <div className="md:w-1/2">
-          <div className="relative">
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={handleSearchChange}
-              placeholder="Search users by name or email..."
-              className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            />
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <FaSearch className="text-gray-400" />
+      <div className="adm-root">
+        <div className="adm-inner">
+          <h1 className="adm-title">Manage Users</h1>
+          <p className="adm-subtitle">{filteredUsers.length} users found</p>
+
+          <div className="adm-toolbar">
+            <div className="adm-search-wrap">
+              <FaSearch className="adm-search-icon" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search by name or email..."
+                className="adm-search"
+              />
             </div>
+            <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)} className="adm-select">
+              <option value="all">All Roles</option>
+              <option value="consumer">Consumers</option>
+              <option value="farmer">Farmers</option>
+              <option value="admin">Admins</option>
+            </select>
           </div>
-        </div>
 
-        <div className="md:w-1/4">
-          <select
-            value={roleFilter}
-            onChange={handleRoleFilterChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-          >
-            <option value="all">All Roles</option>
-            <option value="consumer">Consumers</option>
-            <option value="farmer">Farmers</option>
-            <option value="admin">Admins</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Users Table */}
-      {filteredUsers.length > 0 ? (
-        <div className="glass rounded-xl overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    User
-                  </th>
-                  <th className="text-center px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Role
-                  </th>
-                  <th className="text-center px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Joined
-                  </th>
-                  <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filteredUsers.map((user) => (
-                  <React.Fragment key={user._id}>
-                    <tr className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-3">
-                            <span className="text-green-600 font-bold">{user.name.charAt(0)}</span>
-                          </div>
-                          <div>
-                            <div className="font-medium text-gray-900">{user.name}</div>
-                            <div className="text-sm text-gray-500">{user.email}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-center">
-                        <span
-                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            user.role === "admin"
-                              ? "bg-purple-100 text-purple-800"
-                              : user.role === "farmer"
-                                ? "bg-green-100 text-green-800"
-                                : "bg-blue-100 text-blue-800"
-                          }`}
-                        >
-                          {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">
-                        {new Date(user.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex justify-end space-x-2">
-                          <button
-                            onClick={() => toggleUserDetails(user._id)}
-                            className="text-blue-600 hover:text-blue-900"
-                            title="View Details"
-                          >
-                            <FaUserEdit />
-                          </button>
-                          {user.role !== "admin" && (
-                            <button
-                              onClick={() => handleDeleteClick(user)}
-                              className="text-red-600 hover:text-red-900"
-                              title="Delete"
-                            >
-                              <FaTrash />
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                    {showUserDetails === user._id && (
-                      <tr className="bg-gray-50">
-                        <td colSpan="4" className="px-6 py-4">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {filteredUsers.length > 0 ? (
+            <div className="adm-table-wrap">
+              <table className="adm-table">
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th className="center">Role</th>
+                    <th className="center">Joined</th>
+                    <th className="right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredUsers.map((user) => (
+                    <React.Fragment key={user._id}>
+                      <tr>
+                        <td>
+                          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                            <div className="adm-avatar">{user.name.charAt(0)}</div>
                             <div>
-                              <h4 className="font-medium mb-2">Contact Information</h4>
-                              <div className="space-y-2">
-                                <div className="flex items-center">
-                                  <FaEnvelope className="text-gray-400 mr-2" />
-                                  <span>{user.email}</span>
-                                </div>
-                                {user.phone && (
-                                  <div className="flex items-center">
-                                    <FaPhone className="text-gray-400 mr-2" />
-                                    <span>{user.phone}</span>
-                                  </div>
-                                )}
-                              </div>
+                              <div style={{ fontWeight: 500, color: "#1e2a1f" }}>{user.name}</div>
+                              <div style={{ fontSize: "0.78rem", color: "#8a7a65", fontWeight: 300 }}>{user.email}</div>
                             </div>
-                            {user.address && (
-                              <div>
-                                <h4 className="font-medium mb-2">Address</h4>
-                                <div className="flex items-start">
-                                  <FaMapMarkerAlt className="text-gray-400 mr-2 mt-1" />
-                                  <div>
-                                    {user.address.street && <p>{user.address.street}</p>}
-                                    {user.address.city && user.address.state && (
-                                      <p>
-                                        {user.address.city}, {user.address.state} {user.address.zipCode}
-                                      </p>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
+                          </div>
+                        </td>
+                        <td className="center">
+                          <span className={roleBadge(user.role)}>
+                            {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                          </span>
+                        </td>
+                        <td className="center" style={{ color: "#8a7a65", fontSize: "0.82rem" }}>
+                          {new Date(user.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                        </td>
+                        <td className="right">
+                          <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
+                            <button
+                              className="adm-icon-btn adm-icon-btn-edit"
+                              onClick={() => setExpandedUser(expandedUser === user._id ? null : user._id)}
+                              title="View Details"
+                            >
+                              {expandedUser === user._id ? <FaChevronUp size={11} /> : <FaChevronDown size={11} />}
+                            </button>
+                            {user.role !== "admin" && (
+                              <button
+                                className="adm-icon-btn adm-icon-btn-delete"
+                                onClick={() => { setUserToDelete(user); setShowDeleteModal(true); }}
+                                title="Delete"
+                              >
+                                <FaTrash size={11} />
+                              </button>
                             )}
                           </div>
                         </td>
                       </tr>
-                    )}
-                  </React.Fragment>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                      {expandedUser === user._id && (
+                        <tr className="adm-expand-row">
+                          <td colSpan="4" style={{ padding: 0 }}>
+                            <div className="adm-expand-inner">
+                              <div className="adm-expand-section">
+                                <h4>Contact</h4>
+                                <div className="adm-expand-item">
+                                  <FaEnvelope className="adm-expand-item-icon" />
+                                  {user.email}
+                                </div>
+                                {user.phone && (
+                                  <div className="adm-expand-item">
+                                    <FaPhone className="adm-expand-item-icon" />
+                                    {user.phone}
+                                  </div>
+                                )}
+                              </div>
+                              {user.address && (
+                                <div className="adm-expand-section">
+                                  <h4>Address</h4>
+                                  <div className="adm-expand-item">
+                                    <FaMapMarkerAlt className="adm-expand-item-icon" />
+                                    <div>
+                                      {user.address.street && <div>{user.address.street}</div>}
+                                      {user.address.city && <div>{user.address.city}, {user.address.state} {user.address.zipCode}</div>}
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="adm-empty">
+              <div className="adm-empty-icon"><FaSearch /></div>
+              <h3 className="adm-empty-title">No Users Found</h3>
+              <p className="adm-empty-sub">Try adjusting your search or filter criteria.</p>
+            </div>
+          )}
         </div>
-      ) : (
-        <div className="text-center py-12 glass rounded-xl">
-          <h3 className="text-xl font-semibold mb-2">No Users Found</h3>
-          <p className="text-gray-600">Try adjusting your search criteria.</p>
-        </div>
-      )}
+      </div>
 
-      {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-bold mb-4">Confirm Delete</h3>
-            <p className="mb-6">
-              Are you sure you want to delete the user <span className="font-medium">{userToDelete?.name}</span> (
-              {userToDelete?.email})? This action cannot be undone.
+        <div className="adm-modal-overlay">
+          <div className="adm-modal">
+            <h3 className="adm-modal-title">Delete User</h3>
+            <p className="adm-modal-desc">
+              Are you sure you want to delete <strong>{userToDelete?.name}</strong> ({userToDelete?.email})? This action cannot be undone.
             </p>
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
-              >
-                Cancel
-              </button>
-              <button onClick={confirmDelete} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
-                Delete
-              </button>
+            <div className="adm-modal-actions">
+              <button className="adm-btn-outline" onClick={() => setShowDeleteModal(false)}>Cancel</button>
+              <button className="adm-btn-danger" onClick={confirmDelete}>Delete</button>
             </div>
           </div>
         </div>
       )}
-    </div>
-  )
-}
+    </>
+  );
+};
 
-export default UsersPage
+export default UsersPage;

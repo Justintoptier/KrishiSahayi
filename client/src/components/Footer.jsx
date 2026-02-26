@@ -360,7 +360,7 @@ const Footer = () => {
 
           <div className="footer-bottom">
             <p className="footer-copy">
-              © {currentYear} KrishiSahayi. Crafted with <span>♥</span> for farmers & food lovers.
+              © {currentYear} KrishiSahayi. Crafted with <span>♥</span> by Team XYZ SRM.
             </p>
             <div className="footer-bottom-links">
               <a href="#" className="footer-bottom-link">Privacy Policy</a>
