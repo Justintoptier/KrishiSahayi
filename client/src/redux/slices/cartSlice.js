@@ -39,6 +39,7 @@ const cartSlice = createSlice({
           );
           toast.info(`Updated ${product.name} quantity in your cart`);
         } else {
+          
           state.cartItems.push({
             productId: product._id,
             name: product.name,

@@ -1,5 +1,6 @@
 "use client";
 
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,6 +16,7 @@ import UPIPaymentmodal from "../components/UPIPaymentmodal";
 import { placeholder } from "../assets";
 
 const CheckoutPage = () => {
+  
   const [orderType, setOrderType] = useState("pickup");
   const [showUPIModal, setShowUPIModal] = useState(false);
   const [pendingOrderData, setPendingOrderData] = useState(null);
@@ -44,6 +46,8 @@ const CheckoutPage = () => {
   const { cartItems, farmerId, farmerName, farmerUpiId } = useSelector(
     (state) => state.cart
   );
+  console.log("Full cart state:", { cartItems, farmerId, farmerName, farmerUpiId });
+console.log("First cart item:", cartItems[0]);
   const { user } = useSelector((state) => state.auth);
   const { loading, success, order } = useSelector((state) => state.orders);
 
@@ -176,6 +180,8 @@ const CheckoutPage = () => {
       </div>
     );
   }
+  console.log("farmerUpiId:", farmerUpiId);
+console.log("cartItems:", cartItems);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -400,6 +406,7 @@ const CheckoutPage = () => {
       </div>
     </div>
   );
+  
 };
 
 export default CheckoutPage;
