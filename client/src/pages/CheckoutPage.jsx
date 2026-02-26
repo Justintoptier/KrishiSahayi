@@ -9,7 +9,7 @@ import {
 import { createOrder } from "../redux/slices/orderSlice";
 import { FaArrowLeft, FaLeaf, FaTrash, FaShoppingBasket } from "react-icons/fa";
 import Loader from "../components/Loader";
-import UPIPaymentmodal from "../components/UPIpaymentmodal";
+import UPIPaymentmodal from "../components/UPIPaymentmodal";
 import { placeholder } from "../assets";
 
 const STYLE = `
