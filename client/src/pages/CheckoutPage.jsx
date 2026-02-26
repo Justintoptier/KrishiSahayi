@@ -12,7 +12,7 @@ import {
 import { createOrder } from "../redux/slices/orderSlice";
 import { FaArrowLeft, FaLeaf, FaTrash } from "react-icons/fa";
 import Loader from "../components/Loader";
-import UPIPaymentmodal from "../components/UPIPaymentmodal";
+import UPIPaymentmodal from "../components/UPIpaymentmodal";
 import { placeholder } from "../assets";
 
 const CheckoutPage = () => {
