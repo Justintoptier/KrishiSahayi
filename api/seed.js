@@ -107,7 +107,7 @@ const seed = async () => {
       {
         user: farmer1._id,
         farmName: "Kumaravel Organic Farms",
-        description: "Three-generation family farm specialising in heirloom tomatoes and exotic vegetables grown on rich volcanic soil in Nashik.",
+        description: "Three-generation family farm specialising in heirloom tomatoes and exotic vegetables grown on rich volcanic soil in Chennai.",
         farmingPractices: ["Organic", "Pesticide-Free", "Drip Irrigation"],
         establishedYear: 1998,
         socialMedia: { instagram: "@patelorganicfarms" },
@@ -186,7 +186,7 @@ const seed = async () => {
       {
         farmer: farmer1._id,
         name: "Dragon Fruit",
-        description: "Vibrant pink dragon fruit fresh from our trellised farms in Nashik.",
+        description: "Vibrant pink dragon fruit fresh from our trellised farms in Chennai.",
         category: categories[1]._id,
         price: 120, unit: "piece", quantityAvailable: 150,
         images: ["https://images.unsplash.com/photo-1527325678964-54921661f888?w=400&q=80"],
