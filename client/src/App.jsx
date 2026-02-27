@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loadUser } from "./redux/slices/authSlice";
 import Layout from "./components/Layout";
@@ -10,6 +10,7 @@ import AdminRoute from "./components/AdminRoute";
 import FarmerRoute from "./components/FarmerRoute";
 import ConsumerRoute from "./components/ConsumerRoute";
 import ScrollToTop from "./components/ScrollToTop";
+import { PageTransition } from "./components/PageTransition";
 
 // Public Pages
 import HomePage from "./pages/HomePage";
@@ -44,17 +45,14 @@ import AdminUsersPage from "./pages/admin/UsersPage";
 import AdminCategoriesPage from "./pages/admin/CategoriesPage";
 import AdminOrdersPage from "./pages/admin/OrdersPage";
 
-function App() {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(loadUser());
-  }, [dispatch]);
+// ─── Inner wrapper: reads location for transitions ────────
+// PageTransition is placed INSIDE Routes so it has access to useLocation
+const AnimatedRoutes = () => {
+  const location = useLocation();
 
   return (
-    <>
-      <ScrollToTop />
-      <Routes>
+    <PageTransition>
+      <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route path="about" element={<AboutPage />} />
@@ -83,14 +81,8 @@ function App() {
           <Route element={<FarmerRoute />}>
             <Route path="farmer/dashboard" element={<FarmerDashboardPage />} />
             <Route path="farmer/products" element={<FarmerProductsPage />} />
-            <Route
-              path="farmer/products/add"
-              element={<FarmerAddProductPage />}
-            />
-            <Route
-              path="farmer/products/edit/:id"
-              element={<FarmerEditProductPage />}
-            />
+            <Route path="farmer/products/add" element={<FarmerAddProductPage />} />
+            <Route path="farmer/products/edit/:id" element={<FarmerEditProductPage />} />
             <Route path="farmer/orders" element={<FarmerOrdersPage />} />
             <Route path="farmer/profile" element={<FarmerProfilePage />} />
           </Route>
@@ -103,10 +95,25 @@ function App() {
             <Route path="admin/orders" element={<AdminOrdersPage />} />
           </Route>
 
-          {/* 404 Route */}
+          {/* 404 */}
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
+    </PageTransition>
+  );
+};
+
+function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(loadUser());
+  }, [dispatch]);
+
+  return (
+    <>
+      <ScrollToTop />
+      <AnimatedRoutes />
     </>
   );
 }
