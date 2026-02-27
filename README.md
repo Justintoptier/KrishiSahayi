@@ -1,4 +1,5 @@
-<img width="1907" height="867" alt="image" src="https://github.com/user-attachments/assets/993899f4-2193-40b6-8ccf-41e88a0a6c85" />
+<img width="1902" height="877" alt="image" src="https://github.com/user-attachments/assets/c972e858-b882-4965-b454-8f4f97a06287" />
+
 # 🌾 KrishiSahayi
 
 > **Bridging the gap between farmers and consumers — one harvest at a time.**
@@ -161,12 +162,7 @@ Make sure the frontend is correctly communicating with the backend via the `VITE
 
 ---
 
-## 📸 Screenshots
 
-### 🏠 Homepage
-![KrishiSahayi Homepage](./screenshot-homepage.png)
-
-> _Add more screenshots of the farmer dashboard, consumer browse page, and admin panel here._
 
 ---
 
@@ -190,4 +186,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## 🙏 Acknowledgements
 
-Built with a mission to support the farming community through accessible technology. Special thanks to all contributors and open-source libraries that made this possible.
+Built with a mission to support the farming community through accessible technology. Keep building Fam 💪
