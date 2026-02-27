@@ -75,7 +75,7 @@ const Navbar = () => {
             border-color 0.4s ease;
           pointer-events: all;
           position: relative;
-          overflow: hidden;
+          overflow: visible;
         }
 
 
