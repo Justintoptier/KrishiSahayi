@@ -39,6 +39,7 @@ const FarmersPage = () => {
           font-family: 'Jost', sans-serif;
           min-height: 100vh;
           background: #f9f5ef;
+          padding-top: 90px;
         }
 
         .fp-hero {
@@ -108,14 +109,11 @@ const FarmersPage = () => {
 
         .fp-count strong { color: #7db894; }
 
-        /* Search bar */
+        /* Search bar — no longer sticky */
         .fp-search-bar {
           background: #fefcf8;
           border-bottom: 1px solid rgba(101, 78, 51, 0.1);
           padding: 20px 2rem;
-          position: sticky;
-          top: 72px;
-          z-index: 40;
         }
 
         .fp-search-inner {

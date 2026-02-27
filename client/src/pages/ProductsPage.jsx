@@ -61,6 +61,7 @@ const ProductsPage = () => {
           font-family: 'Jost', sans-serif;
           min-height: 100vh;
           background: #f9f5ef;
+          padding-top: 90px; /* offset for fixed navbar (16px padding + 58px pill + 16px) */
         }
 
         .pp-hero {
@@ -131,14 +132,11 @@ const ProductsPage = () => {
 
         .pp-count strong { color: #7db894; }
 
-        /* Toolbar */
+        /* Toolbar — no longer sticky, just flows naturally */
         .pp-toolbar {
           background: #fefcf8;
           border-bottom: 1px solid rgba(101, 78, 51, 0.1);
           padding: 20px 2rem;
-          position: sticky;
-          top: 72px;
-          z-index: 40;
         }
 
         .pp-toolbar-inner {
@@ -207,9 +205,9 @@ const ProductsPage = () => {
           display: flex;
           align-items: center;
           gap: 8px;
-          background: ${showFilters ? 'linear-gradient(135deg, #4a7c59, #2d5a3d)' : '#f4ede0'};
-          color: ${showFilters ? '#e8d5b0' : '#3d2f1e'};
-          border: 1px solid ${showFilters ? 'transparent' : 'rgba(101, 78, 51, 0.15)'};
+          background: #f4ede0;
+          color: #3d2f1e;
+          border: 1px solid rgba(101, 78, 51, 0.15);
           border-radius: 12px;
           padding: 11px 18px;
           font-family: 'Jost', sans-serif;
@@ -219,6 +217,7 @@ const ProductsPage = () => {
           transition: all 0.25s ease;
         }
 
+        .pp-filter-btn.active,
         .pp-filter-btn:hover {
           background: linear-gradient(135deg, #4a7c59, #2d5a3d);
           color: #e8d5b0;
@@ -378,7 +377,10 @@ const ProductsPage = () => {
               <option value="price-high">Price: High → Low</option>
             </select>
 
-            <button className="pp-filter-btn" onClick={() => setShowFilters(!showFilters)}>
+            <button
+              className={`pp-filter-btn ${showFilters ? "active" : ""}`}
+              onClick={() => setShowFilters(!showFilters)}
+            >
               <FaFilter size={12} />
               Categories
             </button>

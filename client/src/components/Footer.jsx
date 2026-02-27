@@ -363,8 +363,8 @@ const Footer = () => {
               © {currentYear} KrishiSahayi. Crafted with <span>♥</span> by Team XYZ SRM.
             </p>
             <div className="footer-bottom-links">
-              <a href="#" className="footer-bottom-link">Privacy Policy</a>
-              <a href="#" className="footer-bottom-link">Terms of Use</a>
+              
+              <a href="#" className="footer-bottom-link">Keep Building 💪</a>
             </div>
           </div>
         </div>
