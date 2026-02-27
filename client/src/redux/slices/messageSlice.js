@@ -10,18 +10,18 @@ export const sendMessage = createAsyncThunk(
   async (messageData, { rejectWithValue, getState }) => {
     try {
       const token = getState().auth.token
-
       const config = {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       }
-
       const { data } = await axios.post(`${API_URL}/messages`, messageData, config)
-      return data
+      // Pass the receiver ID we sent — always a plain string, matches conversation key
+      return { data: data.data, conversationUserId: String(messageData.receiver) }
     } catch (error) {
-      const message = error.response && error.response.data.message ? error.response.data.message : error.message
+      const message =
+        error.response?.data?.message || error.message
       return rejectWithValue(message)
     }
   },
@@ -33,17 +33,11 @@ export const getConversations = createAsyncThunk(
   async (_, { rejectWithValue, getState }) => {
     try {
       const token = getState().auth.token
-
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-
+      const config = { headers: { Authorization: `Bearer ${token}` } }
       const { data } = await axios.get(`${API_URL}/messages`, config)
       return data
     } catch (error) {
-      const message = error.response && error.response.data.message ? error.response.data.message : error.message
+      const message = error.response?.data?.message || error.message
       return rejectWithValue(message)
     }
   },
@@ -55,17 +49,11 @@ export const getConversationMessages = createAsyncThunk(
   async (userId, { rejectWithValue, getState }) => {
     try {
       const token = getState().auth.token
-
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-
+      const config = { headers: { Authorization: `Bearer ${token}` } }
       const { data } = await axios.get(`${API_URL}/messages/${userId}`, config)
-      return { data, userId }
+      return { data, userId: String(userId) }
     } catch (error) {
-      const message = error.response && error.response.data.message ? error.response.data.message : error.message
+      const message = error.response?.data?.message || error.message
       return rejectWithValue(message)
     }
   },
@@ -77,17 +65,11 @@ export const markMessagesAsRead = createAsyncThunk(
   async (userId, { rejectWithValue, getState }) => {
     try {
       const token = getState().auth.token
-
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-
+      const config = { headers: { Authorization: `Bearer ${token}` } }
       const { data } = await axios.put(`${API_URL}/messages/read/${userId}`, {}, config)
-      return { data, userId }
+      return { data, userId: String(userId) }
     } catch (error) {
-      const message = error.response && error.response.data.message ? error.response.data.message : error.message
+      const message = error.response?.data?.message || error.message
       return rejectWithValue(message)
     }
   },
@@ -105,12 +87,8 @@ const messageSlice = createSlice({
   name: "messages",
   initialState,
   reducers: {
-    clearMessageError: (state) => {
-      state.error = null
-    },
-    setCurrentConversation: (state, action) => {
-      state.currentConversation = action.payload
-    },
+    clearMessageError: (state) => { state.error = null },
+    setCurrentConversation: (state, action) => { state.currentConversation = action.payload },
   },
   extraReducers: (builder) => {
     builder
@@ -121,22 +99,16 @@ const messageSlice = createSlice({
       })
       .addCase(sendMessage.fulfilled, (state, action) => {
         state.loading = false
-
-        const { receiver } = action.payload.data
-        const receiverId = receiver._id || receiver
-
-        // Add message to conversation
-        if (state.messages[receiverId]) {
-          state.messages[receiverId].push(action.payload.data)
-        } else {
-          state.messages[receiverId] = [action.payload.data]
-        }
+        const key = action.payload.conversationUserId
+        if (!state.messages[key]) state.messages[key] = []
+        state.messages[key].push(action.payload.data)
       })
       .addCase(sendMessage.rejected, (state, action) => {
         state.loading = false
         state.error = action.payload
         toast.error(action.payload)
       })
+
       // Get conversations
       .addCase(getConversations.pending, (state) => {
         state.loading = true
@@ -150,6 +122,7 @@ const messageSlice = createSlice({
         state.loading = false
         state.error = action.payload
       })
+
       // Get conversation messages
       .addCase(getConversationMessages.pending, (state) => {
         state.loading = true
@@ -163,23 +136,16 @@ const messageSlice = createSlice({
         state.loading = false
         state.error = action.payload
       })
-      // Mark messages as read
-      .addCase(markMessagesAsRead.fulfilled, (state, action) => {
-        // Update unread count in conversations
-        state.conversations = state.conversations.map((conversation) => {
-          if (conversation.user._id === action.payload.userId) {
-            return { ...conversation, unreadCount: 0 }
-          }
-          return conversation
-        })
 
-        // Update isRead status in messages
+      // Mark as read
+      .addCase(markMessagesAsRead.fulfilled, (state, action) => {
+        state.conversations = state.conversations.map((c) =>
+          c.user._id === action.payload.userId ? { ...c, unreadCount: 0 } : c
+        )
         if (state.messages[action.payload.userId]) {
-          state.messages[action.payload.userId] = state.messages[action.payload.userId].map((message) => {
-            if (message.sender._id === action.payload.userId && !message.isRead) {
-              return { ...message, isRead: true }
-            }
-            return message
+          state.messages[action.payload.userId] = state.messages[action.payload.userId].map((msg) => {
+            const senderId = typeof msg.sender === "object" ? String(msg.sender._id) : String(msg.sender)
+            return senderId === action.payload.userId ? { ...msg, isRead: true } : msg
           })
         }
       })
@@ -187,5 +153,4 @@ const messageSlice = createSlice({
 })
 
 export const { clearMessageError, setCurrentConversation } = messageSlice.actions
-
 export default messageSlice.reducer

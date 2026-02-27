@@ -111,7 +111,7 @@ const AddProductPage = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4" style={{paddingTop: "110px"}}>
       <Link
         to="/farmer/products"
         className="flex items-center text-green-500 hover:text-green-700 mb-6"

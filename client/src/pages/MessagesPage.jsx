@@ -30,7 +30,7 @@ const MessagesPage = () => {
 
         .mp-hero {
           background: linear-gradient(135deg, #1e2a1f 0%, #2d3a2e 60%, #1a2e20 100%);
-          padding: 56px 2rem 48px;
+          padding: 110px 2rem 48px;
           position: relative;
           overflow: hidden;
         }

@@ -59,7 +59,7 @@ const CategoriesPage = () => {
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Jost:wght@300;400;500;600&display=swap');
-        .adm-root{font-family:'Jost',sans-serif;background:#f9f5ef;min-height:100vh;padding:40px 2rem 80px}
+        .adm-root{font-family:'Jost',sans-serif;background:#f9f5ef;min-height:100vh;padding:110px 2rem 80px}
         .adm-inner{max-width:1280px;margin:0 auto}
         .adm-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;flex-wrap:wrap;gap:16px}
         .adm-title{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:#1e2a1f}

@@ -48,7 +48,6 @@ const Navbar = () => {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Jost:wght@300;400;500;600&display=swap');
 
-        /* ── Root: sits above hero ── */
         .nav-root {
           font-family: 'Jost', sans-serif;
           position: fixed; top: 0; left: 0; right: 0;
@@ -57,7 +56,9 @@ const Navbar = () => {
           pointer-events: none;
         }
 
-        /* ── Floating pill container ── */
+        /* ── Floating pill container ──
+           KEY FIX: removed overflow:hidden so dropdown can escape the pill.
+           The clipping was causing the content to be cut off at the pill boundary. */
         .nav-bar {
           max-width: 1100px;
           margin: 0 auto;
@@ -75,12 +76,9 @@ const Navbar = () => {
             border-color 0.4s ease;
           pointer-events: all;
           position: relative;
-          overflow: visible;
+          /* overflow: visible is the default — do NOT set overflow:hidden here */
         }
 
-
-
-        /* ── Inner ── */
         .nav-inner {
           height: 58px;
           padding: 0 28px;
@@ -113,7 +111,6 @@ const Navbar = () => {
         }
         .nav-logo-text span { color: #4a7c59; }
 
-        /* ── Centre divider ── */
         .nav-divider {
           width: 1px; height: 22px;
           background: rgba(101,78,51,0.18);
@@ -151,7 +148,6 @@ const Navbar = () => {
           display: flex; align-items: center; gap: 1rem; flex-shrink: 0;
         }
 
-        /* Cart */
         .cart-btn {
           position: relative; color: #4a3728;
           transition: color 0.2s, transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
@@ -172,7 +168,6 @@ const Navbar = () => {
           to   { transform: scale(1); }
         }
 
-        /* Auth buttons */
         .btn-login {
           text-decoration: none; color: #4a3728;
           font-size: 0.83rem; font-weight: 500;
@@ -223,8 +218,9 @@ const Navbar = () => {
         }
         .profile-btn.open .profile-chevron { transform: rotate(180deg); }
 
-        /* Profile wrapper + dropdown */
+        /* Profile wrapper — CRITICAL: position:relative here so dropdown is anchored to the pill, not .nav-bar */
         .profile-wrapper { position: relative; }
+
         .dropdown {
           position: absolute; top: calc(100% + 10px); right: 0;
           background: rgba(254,252,248,0.97);
@@ -235,6 +231,8 @@ const Navbar = () => {
           box-shadow: 0 12px 40px rgba(40,25,10,0.16);
           animation: drop-in 0.22s cubic-bezier(0.22,1,0.36,1);
           transform-origin: top right;
+          /* Ensure dropdown layers above everything */
+          z-index: 9999;
         }
         @keyframes drop-in {
           from { opacity: 0; transform: scale(0.92) translateY(-6px); }
@@ -257,8 +255,6 @@ const Navbar = () => {
           height: 1px; background: rgba(101,78,51,0.09); margin: 5px 8px;
         }
 
-
-
         /* Mobile */
         .mobile-btn {
           background: none; border: none;
@@ -267,7 +263,6 @@ const Navbar = () => {
         }
         .mobile-btn:hover { color: #3a6647; }
 
-        /* Mobile menu — drops below the pill */
         .mobile-menu {
           max-width: 1100px;
           margin: 10px auto 0;
@@ -415,8 +410,6 @@ const Navbar = () => {
               {isMenuOpen ? <FaTimes size={21} /> : <FaBars size={21} />}
             </button>
           </div>
-
-
         </div>
 
         {/* Mobile Menu */}

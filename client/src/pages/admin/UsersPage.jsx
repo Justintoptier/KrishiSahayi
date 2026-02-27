@@ -45,7 +45,7 @@ const UsersPage = () => {
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Jost:wght@300;400;500;600&display=swap');
-        .adm-root{font-family:'Jost',sans-serif;background:#f9f5ef;min-height:100vh;padding:40px 2rem 80px}
+        .adm-root{font-family:'Jost',sans-serif;background:#f9f5ef;min-height:100vh;padding:110px 2rem 80px}
         .adm-inner{max-width:1280px;margin:0 auto}
         .adm-title{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:#1e2a1f}
         .adm-subtitle{font-size:.875rem;color:#8a7a65;font-weight:300;margin-top:4px;margin-bottom:32px}

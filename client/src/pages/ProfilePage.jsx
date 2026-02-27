@@ -17,7 +17,8 @@ const STYLE = `
 
   .prp-hero {
     background: linear-gradient(135deg, #1e2a1f, #2d5a3d);
-    padding: 48px 2rem 44px; position: relative; overflow: hidden;
+    /* FIX: padding-top 110px clears the 90px fixed navbar */
+    padding: 110px 2rem 44px; position: relative; overflow: hidden;
   }
   .prp-hero::before {
     content: ''; position: absolute; inset: 0;
@@ -47,13 +48,11 @@ const STYLE = `
 
   .prp-main { max-width: 860px; margin: 0 auto; padding: 32px 2rem; }
 
-  /* Tab nav */
   .prp-tabs {
     display: flex; gap: 4px; background: #fefcf8;
     border: 1px solid rgba(101,78,51,0.1); border-radius: 12px;
     padding: 4px; margin-bottom: 28px; width: fit-content;
   }
-
   .prp-tab {
     padding: 9px 22px; border-radius: 9px; border: none;
     font-family: 'Jost', sans-serif; font-size: 0.85rem; font-weight: 500;
@@ -69,25 +68,20 @@ const STYLE = `
     border-radius: 18px; padding: 32px; box-shadow: 0 2px 12px rgba(0,0,0,0.03);
     margin-bottom: 20px;
   }
-
   .prp-card-title {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.2rem; font-weight: 700; color: #2d1f0e;
     margin-bottom: 22px; padding-bottom: 12px;
     border-bottom: 1px solid rgba(101,78,51,0.08);
   }
-
   .prp-field { margin-bottom: 18px; }
-
   .prp-label {
     display: block; font-size: 0.72rem; font-weight: 700;
     letter-spacing: 0.08em; text-transform: uppercase;
     color: #8a7a65; margin-bottom: 6px;
   }
-
   .prp-input-wrap { position: relative; }
   .prp-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: #b0a090; font-size: 12px; }
-
   .prp-input {
     width: 100%; background: #f4ede0;
     border: 1px solid rgba(101,78,51,0.15); border-radius: 10px;
@@ -98,7 +92,6 @@ const STYLE = `
   .prp-input.no-icon { padding-left: 13px; }
   .prp-input::placeholder { color: #b0a090; }
   .prp-input:focus { border-color: rgba(74,124,89,0.4); background: #fefcf8; box-shadow: 0 0 0 3px rgba(74,124,89,0.08); }
-
   .prp-textarea {
     width: 100%; background: #f4ede0; border: 1px solid rgba(101,78,51,0.15);
     border-radius: 10px; padding: 11px 13px; font-family: 'Jost', sans-serif;
@@ -107,11 +100,8 @@ const STYLE = `
   }
   .prp-textarea:focus { border-color: rgba(74,124,89,0.4); background: #fefcf8; }
   .prp-textarea::placeholder { color: #b0a090; }
-
   .prp-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .prp-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
-
-  /* Tag chips */
   .prp-practice-input-row { display: flex; gap: 10px; margin-bottom: 12px; }
   .prp-add-btn {
     background: linear-gradient(135deg, #4a7c59, #2d5a3d); color: #e8d5b0;
@@ -119,36 +109,27 @@ const STYLE = `
     font-family: 'Jost', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer;
     white-space: nowrap;
   }
-
   .prp-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-
   .prp-tag {
     display: inline-flex; align-items: center; gap: 6px;
     background: rgba(74,124,89,0.1); border: 1px solid rgba(74,124,89,0.22);
     color: #2d5a3d; border-radius: 100px; padding: 5px 12px;
     font-size: 0.82rem; font-weight: 500;
   }
-
   .prp-tag-remove {
     background: none; border: none; color: #4a7c59; cursor: pointer;
     padding: 0; display: flex; opacity: 0.7; transition: opacity 0.2s;
   }
   .prp-tag-remove:hover { opacity: 1; }
-
-  /* Business hours */
   .prp-hours-row {
     display: grid; grid-template-columns: 100px 1fr 1fr; align-items: center; gap: 12px;
     padding: 8px 0; border-bottom: 1px solid rgba(101,78,51,0.06);
   }
   .prp-hours-row:last-child { border-bottom: none; }
   .prp-hours-day { font-size: 0.85rem; color: #5c4a32; text-transform: capitalize; font-weight: 500; }
-
-  /* Toggle */
   .prp-toggle-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; }
   .prp-toggle-label { font-size: 0.88rem; color: #3d2f1e; }
   .prp-checkbox { accent-color: #2d5a3d; width: 16px; height: 16px; cursor: pointer; }
-
-  /* Submit */
   .prp-submit {
     background: linear-gradient(135deg, #4a7c59, #2d5a3d); color: #e8d5b0;
     border: none; border-radius: 12px; padding: 13px 32px;
@@ -157,12 +138,10 @@ const STYLE = `
   }
   .prp-submit:hover { opacity: 0.9; box-shadow: 0 6px 20px rgba(45,90,61,0.3); transform: translateY(-1px); }
   .prp-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
   .prp-success {
     display: flex; align-items: center; gap: 8px;
     color: #2d5a3d; font-size: 0.85rem; font-weight: 500; margin-top: 12px;
   }
-
   @media (max-width: 640px) {
     .prp-grid-2, .prp-grid-3 { grid-template-columns: 1fr; }
     .prp-hours-row { grid-template-columns: 80px 1fr 1fr; }
@@ -277,7 +256,6 @@ const ProfilePage = () => {
     <>
       <style>{STYLE}</style>
       <div className="prp-root">
-        {/* Hero */}
         <div className="prp-hero">
           <div className="prp-hero-inner">
             <div className="prp-avatar"><FaUser /></div>
@@ -289,7 +267,6 @@ const ProfilePage = () => {
         </div>
 
         <div className="prp-main">
-          {/* Tabs */}
           <div className="prp-tabs">
             <button className={`prp-tab ${activeTab === "general" ? "active" : ""}`} onClick={() => setActiveTab("general")}>
               General Info
@@ -301,10 +278,8 @@ const ProfilePage = () => {
             )}
           </div>
 
-          {/* General tab */}
           {activeTab === "general" && (
             <form onSubmit={(e) => { e.preventDefault(); dispatch(updateProfile(userForm)); }}>
-              {/* Personal */}
               <div className="prp-card">
                 <div className="prp-card-title">Personal Information</div>
                 <div className="prp-field">
@@ -330,7 +305,6 @@ const ProfilePage = () => {
                 </div>
               </div>
 
-              {/* Address */}
               <div className="prp-card">
                 <div className="prp-card-title">Address</div>
                 <div className="prp-field">
@@ -361,10 +335,8 @@ const ProfilePage = () => {
             </form>
           )}
 
-          {/* Farm tab */}
           {activeTab === "farm" && user?.role === "farmer" && (
             <form onSubmit={(e) => { e.preventDefault(); dispatch(updateFarmerProfile(farmerForm)); }}>
-              {/* Farm basics */}
               <div className="prp-card">
                 <div className="prp-card-title">Farm Information</div>
                 <div className="prp-grid-2" style={{ marginBottom: 14 }}>
@@ -381,8 +353,6 @@ const ProfilePage = () => {
                   <label className="prp-label">Description</label>
                   <textarea name="description" rows="4" value={farmerForm.description} onChange={handleFarmerChange} className="prp-textarea" placeholder="Tell customers about your farm…" required />
                 </div>
-
-                {/* Practices */}
                 <div className="prp-field">
                   <label className="prp-label">Farming Practices</label>
                   <div className="prp-practice-input-row">
@@ -400,7 +370,6 @@ const ProfilePage = () => {
                 </div>
               </div>
 
-              {/* Social */}
               <div className="prp-card">
                 <div className="prp-card-title">Social Media</div>
                 <div className="prp-grid-3">
@@ -428,7 +397,6 @@ const ProfilePage = () => {
                 </div>
               </div>
 
-              {/* Business hours */}
               <div className="prp-card">
                 <div className="prp-card-title">Business Hours</div>
                 {Object.entries(farmerForm.businessHours).map(([day, hours]) => (
@@ -440,7 +408,6 @@ const ProfilePage = () => {
                 ))}
               </div>
 
-              {/* Order options */}
               <div className="prp-card">
                 <div className="prp-card-title">Order Options</div>
                 <div className="prp-toggle-row">
@@ -457,7 +424,6 @@ const ProfilePage = () => {
                     <input name="deliveryRadius" type="number" min="0" value={farmerForm.deliveryRadius} onChange={handleFarmerChange} className="prp-input no-icon" style={{ maxWidth: 120 }} />
                   </div>
                 )}
-
                 <button type="submit" className="prp-submit" disabled={farmerLoading}>
                   {farmerLoading ? "Saving…" : "Save Farm Profile"}
                 </button>

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getConsumerOrders } from "../redux/slices/orderSlice";
 import OrderItem from "../components/OrderItem";
 import Loader from "../components/Loader";
-import { FaShoppingBasket, FaLeaf } from "react-icons/fa";
+import { FaShoppingBasket } from "react-icons/fa";
 
 const STATUS_FILTERS = [
   { key: "all", label: "All" },
@@ -38,6 +38,7 @@ const OrdersPage = () => {
           font-family: 'Jost', sans-serif;
           min-height: 100vh;
           background: #f9f5ef;
+          padding-top: 72px; /* ← offset for fixed navbar */
         }
 
         .op-hero {
@@ -99,7 +100,7 @@ const OrdersPage = () => {
           border-bottom: 1px solid rgba(101, 78, 51, 0.1);
           padding: 16px 2rem;
           position: sticky;
-          top: 72px;
+          top: 0; /* ← 0 because op-root already offsets by navbar height */
           z-index: 40;
         }
 

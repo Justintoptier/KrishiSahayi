@@ -61,7 +61,7 @@ const ProductsPage = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4" style={{paddingTop: "110px"}}>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold mb-2">My Products</h1>
