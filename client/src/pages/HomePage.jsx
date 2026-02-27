@@ -149,14 +149,100 @@ const STYLE = `
   .hp-why-title { font-family: 'Cormorant Garamond', serif; font-size: 1.18rem; font-weight: 700; color: #2d1f0e; margin-bottom: 8px; }
   .hp-why-desc { color: #8a7a65; font-size: 0.84rem; font-weight: 300; line-height: 1.7; }
 
-  /* Category */
-  .hp-cats-grid { display: grid; grid-template-columns: repeat(6,1fr); gap: 12px; }
-  .hp-cat-card { background: #fefcf8; border: 1px solid rgba(101,78,51,0.1); border-radius: 16px; padding: 26px 10px; text-align: center; text-decoration: none; transition: all 0.3s ease; }
-  .hp-cat-card:hover { transform: translateY(-5px); background: linear-gradient(135deg, #4a7c59, #2d5a3d); border-color: transparent; box-shadow: 0 12px 32px rgba(45,90,61,0.25); }
-  .hp-cat-icon { width: 50px; height: 50px; margin: 0 auto 12px; background: rgba(74,124,89,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 21px; transition: background 0.3s; }
-  .hp-cat-card:hover .hp-cat-icon { background: rgba(255,255,255,0.15); }
-  .hp-cat-name { font-size: 0.78rem; font-weight: 600; color: #5c4a32; transition: color 0.3s; }
-  .hp-cat-card:hover .hp-cat-name { color: #e8d5b0; }
+  /* ── Category Cards ── */
+  .hp-cats-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
+  }
+
+  .hp-cat-card {
+    position: relative;
+    background: #ffffff;
+    border: 1px solid rgba(101,78,51,0.1);
+    border-radius: 20px;
+    text-align: center;
+    text-decoration: none;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 136px;
+    padding: 24px 10px 20px;
+    gap: 10px;
+    transition:
+      transform 0.42s cubic-bezier(0.34, 1.4, 0.64, 1),
+      box-shadow 0.38s ease,
+      border-color 0.3s ease;
+  }
+
+  /* Sliding fill overlay */
+  .hp-cat-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(150deg, #2d5a3d 0%, #1e3a27 100%);
+    transform: translateY(105%);
+    transition: transform 0.44s cubic-bezier(0.76, 0, 0.24, 1);
+    z-index: 0;
+    border-radius: inherit;
+  }
+
+  .hp-cat-card:hover::before {
+    transform: translateY(0);
+  }
+
+  .hp-cat-card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 18px 44px rgba(20, 55, 32, 0.3);
+    border-color: transparent;
+  }
+
+  /* Icon circle */
+  .hp-cat-icon {
+    position: relative;
+    z-index: 1;
+    width: 54px;
+    height: 54px;
+    background: rgba(74, 124, 89, 0.1);
+    border: 1.5px solid rgba(74, 124, 89, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    transition:
+      background 0.38s ease,
+      border-color 0.38s ease,
+      transform 0.44s cubic-bezier(0.34, 1.56, 0.64, 1);
+    flex-shrink: 0;
+  }
+
+  .hp-cat-card:hover .hp-cat-icon {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.28);
+    transform: scale(1.12) translateY(-2px);
+  }
+
+  /* Label */
+  .hp-cat-name {
+    position: relative;
+    z-index: 1;
+    font-size: 0.76rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #5c4a32;
+    line-height: 1.3;
+    transition:
+      color 0.32s ease,
+      transform 0.38s ease;
+  }
+
+  .hp-cat-card:hover .hp-cat-name {
+    color: #e8d5b0;
+    transform: translateY(1px);
+  }
 
   /* Grids */
   .hp-products-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
@@ -277,7 +363,7 @@ const HomePage = () => {
           <ParticleCanvas />
           <div className="hp-hero-content">
             <div className="hp-hero-inner">
-              <div className="hp-badge"><div className="hp-badge-dot" /><span>KrishiSahayi · SRM</span></div>
+              <div className="hp-badge"><div className="hp-badge-dot" /><span>KrishiSahayi</span><div className="hp-badge-dot" /></div>
               <h1 className="hp-headline">Farm Fresh,<br /><em>Straight to You</em></h1>
               <p className="hp-sub">Get the freshest locally grown produce delivered from farm to table. Support real farmers, discover seasonal variety.</p>
               <div className="hp-ctas">
