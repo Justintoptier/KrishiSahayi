@@ -22,6 +22,11 @@ exports.sendMessage = async (req, res) => {
       relatedOrder,
     });
 
+    // ✅ Populate sender & receiver so the frontend gets { _id, name, role }
+    // instead of raw ObjectIDs — this fixes sent/received detection and date parsing
+    await message.populate("sender", "name role");
+    await message.populate("receiver", "name role");
+
     res.status(201).json({
       success: true,
       data: message,

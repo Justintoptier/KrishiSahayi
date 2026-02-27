@@ -57,21 +57,21 @@ const seed = async () => {
     });
 
     const farmer1 = await User.create({
-      name: "Ramesh Patel",
-      email: "ramesh@kisanbazar.com",
+      name: "Kumaravel",
+      email: "Kumaravel@gmail.com",
       password: hashedPassword,
       role: "farmer",
       phone: "9111111111",
-      address: { street: "Farm Road 1", city: "Nashik", state: "Maharashtra", zipCode: "422001" },
+      address: { street: "Kovilpathagai", city: "Chennai", state: "TamilNadu", zipCode: "600054" },
     });
 
     const farmer2 = await User.create({
-      name: "Gurpreet Singh",
-      email: "gurpreet@kisanbazar.com",
+      name: "Manikandan",
+      email: "manikandan@gmail.com",
       password: hashedPassword,
       role: "farmer",
       phone: "9222222222",
-      address: { street: "Golden Fields", city: "Amritsar", state: "Punjab", zipCode: "143001" },
+      address: { street: "Kovilpathagai", city: "Chennai", state: "TamilNadu", zipCode: "600054" },
     });
 
     const farmer3 = await User.create({
@@ -80,7 +80,7 @@ const seed = async () => {
       password: hashedPassword,
       role: "farmer",
       phone: "9333333333",
-      address: { street: "Wayanad Hills", city: "Wayanad", state: "Kerala", zipCode: "673121" },
+      address: { street: "Avadi", city: "Chennai", state: "TamilNadu", zipCode: "600054" },
     });
 
     const consumer1 = await User.create({
@@ -89,7 +89,7 @@ const seed = async () => {
       password: hashedPassword,
       role: "consumer",
       phone: "9444444444",
-      address: { street: "12 MG Road", city: "Bangalore", state: "Karnataka", zipCode: "560001" },
+      address: { street: "Avadi", city: "Chennai", state: "TamilNadu", zipCode: "600054" },
     });
 
     const consumer2 = await User.create({
@@ -98,7 +98,7 @@ const seed = async () => {
       password: hashedPassword,
       role: "consumer",
       phone: "9555555555",
-      address: { street: "45 Connaught Place", city: "Delhi", state: "Delhi", zipCode: "110001" },
+      address: { street: "Kovilpathagai", city: "Chennai", state: "TamilNadu", zipCode: "600054" },
     });
 
     // ── 3. Farmer Profiles ──
@@ -106,7 +106,7 @@ const seed = async () => {
     await FarmerProfile.insertMany([
       {
         user: farmer1._id,
-        farmName: "Patel Organic Farms",
+        farmName: "Kumaravel Organic Farms",
         description: "Three-generation family farm specialising in heirloom tomatoes and exotic vegetables grown on rich volcanic soil in Nashik.",
         farmingPractices: ["Organic", "Pesticide-Free", "Drip Irrigation"],
         establishedYear: 1998,
@@ -124,7 +124,7 @@ const seed = async () => {
       },
       {
         user: farmer2._id,
-        farmName: "Singh Golden Grains",
+        farmName: "Manikandan Golden Grains",
         description: "Premium basmati rice and organic pulses grown in the fertile fields of Punjab using traditional methods passed down for generations.",
         farmingPractices: ["Traditional", "Low Pesticide", "Crop Rotation"],
         establishedYear: 2003,
