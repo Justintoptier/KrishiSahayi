@@ -41,7 +41,7 @@ const Counter = ({ target, suffix = "" }) => {
 
 const teamMembers = [
   { id: 1, name: "Justin Juby", pic: member1, linkedin: "https://www.linkedin.com/in/justinjuby/" },
-  { id: 2, name: "Sagnik Roy Chowdhury",  pic: member2, linkedin: "https://www.linkedin.com/in/mateeb-haider-233b6b254/" },
+  { id: 2, name: "Sagnik Roy Chowdhury",  pic: member2, linkedin: "https://www.linkedin.com/in/s-r-chowdhury/" },
   { id: 3, name: "Franklin Babu", pic: member3, linkedin: "https://www.linkedin.com/in/franklin-babu-852022327/" },
 ];
 
